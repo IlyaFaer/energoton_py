@@ -8,7 +8,7 @@ class ExponentialPriority:
     exp_values = {
         "Lowest": 1,
         "Low": 2,
-        "Medium": 4,
+        "Normal": 4,
         "High": 8,
         "Highest": 16,
     }

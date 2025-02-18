@@ -1,24 +1,15 @@
 import unittest
 
-from task.relation import Alternative, Blocking
-from task.work_unit import WorkUnit
+from work.relation import Alternative, Blocking
+from work.work_unit import WorkUnit
 
 
 class TestWorkUnit(unittest.TestCase):
-    def test_id_immutable(self):
-        id_ = 1
-
-        unit = WorkUnit(id_, "test-name")
-        with self.assertRaises(ValueError):
-            unit.id = 2
-
-        self.assertEqual(unit.id, id_)
-
     def test_custom_fields(self):
         key1 = "key1"
         value1 = "value1"
 
-        unit = WorkUnit(1, "test-name", custom_fields={key1: value1})
+        unit = WorkUnit(name="test-name", custom_fields={key1: value1})
 
         self.assertEqual(unit[key1], value1)
 
@@ -34,25 +25,25 @@ class TestWorkUnit(unittest.TestCase):
             unit[key2]
 
     def test_blocking_relationship(self):
-        blocker = WorkUnit(1, "test-name1")
-        blocked = WorkUnit(2, "test-name2")
+        blocker = WorkUnit(name="test-name1")
+        blocked = WorkUnit(name="test-name2")
 
-        rel = Blocking(1, blocker, blocked)
+        rel = Blocking(blocker, blocked)
 
-        self.assertEqual(blocked.blocked_by, [rel])
-        self.assertEqual(blocker.blocked_by, [])
+        self.assertEqual(list(blocked.blocked_by), [rel])
+        self.assertEqual(list(blocker.blocked_by), [])
 
-        self.assertEqual(blocked.blocking, [])
-        self.assertEqual(blocker.blocking, [rel])
+        self.assertEqual(list(blocked.blocking), [])
+        self.assertEqual(list(blocker.blocking), [rel])
 
     def test_is_blocked_by_parent(self):
-        root = WorkUnit(4, "test-name4")
-        parent = WorkUnit(3, "test-name3", parent=root)
+        root = WorkUnit(name="test-name4")
+        parent = WorkUnit(name="test-name3", parent=root)
 
-        blocked = WorkUnit(2, "test-name2", parent=parent)
-        blocker = WorkUnit(1, "test-name1")
+        blocked = WorkUnit(name="test-name2", parent=parent)
+        blocker = WorkUnit(name="test-name1")
 
-        Blocking(1, blocker, parent)
+        Blocking(blocker, parent)
 
         self.assertTrue(blocked.is_blocked)
 
@@ -60,29 +51,29 @@ class TestWorkUnit(unittest.TestCase):
         parent.relations = {}
         self.assertFalse(blocked.is_blocked)
 
-        Blocking(2, blocker, root)
+        Blocking(blocker, root)
         self.assertTrue(blocked.is_blocked)
 
     def test_drop_blocking(self):
-        blocker = WorkUnit(1, "test-name1")
-        blocked = WorkUnit(2, "test-name2")
+        blocker = WorkUnit(name="test-name1")
+        blocked = WorkUnit(name="test-name2")
 
-        rel = Blocking(1, blocker, blocked)
+        rel = Blocking(blocker, blocked)
         self.assertTrue(blocked.is_blocked)
 
         rel.drop()
 
-        self.assertEqual(blocker.blocking, [])
-        self.assertEqual(blocked.blocked_by, [])
+        self.assertEqual(list(blocker.blocking), [])
+        self.assertEqual(list(blocked.blocked_by), [])
         self.assertFalse(blocked.is_blocked)
 
     def test_alternative_relationship(self):
-        alt1 = WorkUnit(1, "test-name1")
-        alt2 = WorkUnit(2, "test-name2")
-        alt3 = WorkUnit(3, "test-name3")
+        alt1 = WorkUnit(name="test-name1")
+        alt2 = WorkUnit(name="test-name2")
+        alt3 = WorkUnit(name="test-name3")
 
-        rel = Alternative(1, alt1, alt2, alt3)
+        rel = Alternative(alt1, alt2, alt3)
 
-        self.assertEqual(alt1.relations[1], rel)
-        self.assertEqual(alt2.relations[1], rel)
-        self.assertEqual(alt3.relations[1], rel)
+        self.assertEqual(list(alt1.relations.values())[0], rel)
+        self.assertEqual(list(alt2.relations.values())[0], rel)
+        self.assertEqual(list(alt3.relations.values())[0], rel)

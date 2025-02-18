@@ -1,7 +1,6 @@
 import unittest
 
-from task.priority import custom_priority
-from task.task import Task
+from work.priority import custom_priority
 
 
 class TestPriority(unittest.TestCase):

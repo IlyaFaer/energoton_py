@@ -1,1 +1,5 @@
-from .energoton import Energoton
+from .energoton import (
+    Energoton,
+    DeterministicEnergoton,
+    NonDeterministicEnergoton,
+)

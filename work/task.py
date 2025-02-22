@@ -42,7 +42,9 @@ class Task(WorkUnit):
         super().__init__(custom_fields, parent, priority, id_, name)
 
     def __repr__(self):
-        return f"Task(name={self.name}, cost={self.cost}, spent={self.spent})"
+        return (
+            f"Task(name='{self.name}', cost={self.cost}, spent={self.spent})"
+        )
 
     @property
     def is_solved(self):

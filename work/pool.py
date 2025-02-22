@@ -72,8 +72,21 @@ class Pool(WorkUnit):
         return tasks
 
     def get(self, child_id):
-        return self.children[child_id]
+        if child_id in self.children:
+            return self.children[child_id]
+
+        for task in self.flat_tasks():
+            if task.id == child_id:
+                return task
 
     def pop(self, child_id):
-        self.children[child_id].parent = None
-        del self.children[child_id]
+        if child_id in self.children:
+            child = self.children[child_id]
+            self.children[child_id].parent = None
+            del self.children[child_id]
+
+        for task in self.flat_tasks():
+            if task.id == child_id:
+                child = task.parent.pop(task.id)
+
+        return child

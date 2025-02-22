@@ -18,6 +18,16 @@ class TestPool(unittest.TestCase):
 
         self.assertEqual(pool.get(task_id2), task)
 
+    def test_get_embedded_task(self):
+        task_id = "there-is-some-id"
+
+        task = Task(10, id_=task_id, name="Task 1")
+        pool = Pool(children=[task], name="Pool 1")
+
+        root_pool = Pool(children=[pool], name="Root Pool")
+        found_task = root_pool.get(task.id)
+        self.assertEqual(found_task, task)
+
     def test_task_already_exists(self):
         same_id = "same-id"
 
@@ -48,6 +58,19 @@ class TestPool(unittest.TestCase):
 
         pool.pop(new_pool.id)
         self.assertIsNone(new_pool.parent)
+
+    def test_pop_embedded_task(self):
+        task_id = "there-is-some-id"
+
+        task = Task(10, id_=task_id, name="Task 1")
+        pool = Pool(children=[task], name="Pool 1")
+
+        root_pool = Pool(children=[pool], name="Root Pool")
+        found_task = root_pool.pop(task.id)
+        self.assertEqual(found_task, task)
+
+        self.assertEqual(len(root_pool), 1)
+        self.assertEqual(len(pool), 0)
 
     def test_iter(self):
         tasks = [Task(f"Task {i}", i, id_=i) for i in range(5)]

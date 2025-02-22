@@ -6,11 +6,11 @@ class NoPriority:
 
 class ExponentialPriority:
     exp_values = {
-        "Lowest": 1,
-        "Low": 2,
-        "Normal": 4,
-        "High": 8,
-        "Highest": 16,
+        "lowest": 1,
+        "low": 2,
+        "normal": 4,
+        "high": 8,
+        "highest": 16,
     }
 
     def __init__(self, label):

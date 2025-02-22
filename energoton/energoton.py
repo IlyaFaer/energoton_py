@@ -25,10 +25,7 @@ class Energoton(IdMixin):
                 can_continue = True
 
         if not can_continue:
-            # TODO: it should be done in the planner
-            # the user may want to see all plans
-            # including different order of tasks
-            plans.add(tuple(sorted(plan, key=lambda t: t.id)))
+            plans.append(copy.copy(plan))
 
         if task is not None:
             if isinstance(task, PartTask):
@@ -46,7 +43,7 @@ class Energoton(IdMixin):
                 task.spent -= energy_spent
 
     def build_plans(self, pool):
-        plans = set()
+        plans = []
         self._build_plans(
             task=None, plan=Plan(), tasks=pool.flat_tasks(), plans=plans
         )
@@ -71,7 +68,7 @@ class DeterministicEnergoton(Energoton):
         return False
 
     def _task_done(self, task, plan, tasks, _):
-        plan.append(task)
+        plan.append(copy.copy(task))
         tasks.remove(task)
         return task
 
@@ -85,8 +82,9 @@ class NonDeterministicEnergoton(Energoton):
     def _task_done(self, task, plan, tasks, energy_spent):
         if task.is_solved:
             tasks.remove(task)
+            plan.append(copy.copy(task))
         else:
             task = task.part(energy_spent)
+            plan.append(task)
 
-        plan.append(task)
         return task

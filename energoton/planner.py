@@ -26,10 +26,9 @@ class Plan(list):
 
 
 class Planner(list):
-    def __init__(self, energotons, pool, cycles=1):
+    def __init__(self, energotons, pool):
         self._pool = pool
         self._energotons = energotons
-        self._cycles = cycles
 
         self._plans = []
 
@@ -50,7 +49,7 @@ class Planner(list):
                 new_plans = []
                 for plan in self._plans:
                     new_plans.extend(
-                        e.build_plans(self.pool_after_plan(plan), plan)
+                        e.build_plans(self.pool_after_plans([plan]), plan)
                     )
                 self._plans = new_plans
 
@@ -86,11 +85,12 @@ class Planner(list):
 
         return plans[:i]
 
-    def pool_after_plan(self, plan):
+    def pool_after_plans(self, plans):
         pool = copy.deepcopy(self._pool)
         tasks = pool.as_dict
 
-        for work_done in plan:
-            tasks[work_done.task.id]._work_done.append(work_done)
+        for plan in plans:
+            for work_done in plan:
+                tasks[work_done.task.id]._work_done.append(work_done)
 
         return pool

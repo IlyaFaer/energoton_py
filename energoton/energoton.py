@@ -7,10 +7,28 @@ from .planner import Plan
 class Energoton(IdMixin):
     def __init__(self, capacity, id_=None, name=None):
         self.name = name
-        self.capacity = capacity
-        self.energy_left = capacity
+        self._capacity = capacity
+        self.energy_left = self.next_charge
 
         super().__init__(id_)
+
+    @property
+    def capacity(self):
+        return self._capacity
+
+    @property
+    def next_charge(self):
+        if isinstance(self._capacity, int):
+            return self._capacity
+
+        if isinstance(self._capacity, list):
+            if len(self._capacity) == 0:
+                return 0
+
+            return self._capacity.pop(0)
+
+    def recharge(self):
+        self.energy_left = self.next_charge
 
     def _build_plans(self, task, plan, tasks, plans):
         if task is not None:

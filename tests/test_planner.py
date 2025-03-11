@@ -227,7 +227,7 @@ class TestPlanner(unittest.TestCase):
             ignore_task_order=True, sort_by="length", only_best=True
         )
 
-        result_pool = planner.pool_after_plan(plans[0])
+        result_pool = planner.pool_after_plans([plans[0]])
         self.assertTrue(result_pool.children[t3.id].is_solved)
         self.assertFalse(result_pool.children[pool1.id].is_solved)
 

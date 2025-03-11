@@ -251,3 +251,21 @@ class TestEnergoton(unittest.TestCase):
                 [WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)],
             ],
         )
+
+    def test_charges(self):
+        charge = 5
+        e = DeterministicEnergoton(charge)
+        self.assertEqual(e.energy_left, charge)
+        self.assertEqual(e.next_charge, charge)
+
+        e = DeterministicEnergoton([5, 3, 2])
+        self.assertEqual(e.energy_left, 5)
+        e.recharge()
+
+        self.assertEqual(e.energy_left, 3)
+        e.recharge()
+
+        self.assertEqual(e.energy_left, 2)
+        e.recharge()
+
+        self.assertEqual(e.energy_left, 0)

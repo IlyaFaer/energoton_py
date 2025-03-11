@@ -3,7 +3,7 @@ from unittest import mock
 
 from energoton import DeterministicEnergoton, NonDeterministicEnergoton
 from energoton.planner import Planner
-from work import Alternative, Blocking, Pool, Task, WorkDone
+from work import Pool, Task, WorkDone
 from work.priority import ExponentialPriority
 
 
@@ -234,3 +234,40 @@ class TestPlanner(unittest.TestCase):
         self.assertEqual(
             result_pool.children[pool1.id].children[t1.id].spent, 1
         )
+
+    def test_pool_two_energotons(self):
+        pool1 = Pool()
+        t1 = Task(5, id_="1")
+        t2 = Task(3, id_="2")
+        pool1.add(t1)
+        pool1.add(t2)
+
+        root_pool = Pool()
+        t3 = Task(4, id_="3")
+        root_pool.add(t3)
+        root_pool.add(pool1)
+
+        planner = Planner(
+            [
+                DeterministicEnergoton(8, id_="1"),
+                DeterministicEnergoton(8, id_="2"),
+            ],
+            root_pool,
+        )
+        planner.build_plans()
+        plans = planner.filter_plans(
+            ignore_task_order=True, sort_by="length", only_best=True
+        )
+
+        for plan, result in zip(
+            plans,
+            (
+                [("2", "1", 5), ("1", "2", 3), ("1", "3", 4)],
+                [("1", "1", 5), ("1", "2", 3), ("2", "3", 4)],
+            ),
+        ):
+            work_done = []
+            for work in plan:
+                work_done.append((work.assignee.id, work.task.id, work.amount))
+
+            self.assertEqual(work_done, result)

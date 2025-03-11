@@ -43,7 +43,17 @@ class Planner(list):
         return unique_plans
 
     def build_plans(self):
-        self._plans = self._energotons[0].build_plans(self._pool)
+        for e in self._energotons:
+            if self._plans == []:
+                self._plans = e.build_plans(self._pool)
+            else:
+                new_plans = []
+                for plan in self._plans:
+                    new_plans.extend(
+                        e.build_plans(self.pool_after_plan(plan), plan)
+                    )
+                self._plans = new_plans
+
         return self._plans
 
     def filter_plans(
@@ -69,7 +79,9 @@ class Planner(list):
 
     def _only_best(self, plans, attr):
         i = 1
-        while getattr(plans[i], attr) == getattr(plans[0], attr):
+        while getattr(plans[i], attr) == getattr(
+            plans[0], attr
+        ) and i + 1 < len(plans):
             i += 1
 
         return plans[:i]

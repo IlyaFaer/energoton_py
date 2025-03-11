@@ -1,7 +1,6 @@
 import copy
 
 from base.mixins import IdMixin
-from work import WorkDone
 from .planner import Plan
 
 
@@ -38,10 +37,13 @@ class Energoton(IdMixin):
 
             work_done.drop()
 
-    def build_plans(self, pool):
+    def build_plans(self, pool, plan=None):
         plans = []
         self._build_plans(
-            task=None, plan=Plan(), tasks=pool.flat_tasks(), plans=plans
+            task=None,
+            plan=plan or Plan(),
+            tasks=pool.flat_tasks(),
+            plans=plans,
         )
         return plans
 

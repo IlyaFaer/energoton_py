@@ -1,7 +1,7 @@
 import copy
 
 from base.mixins import IdMixin
-from work import PartTask
+from work import WorkDone
 from .planner import Plan
 
 
@@ -15,8 +15,10 @@ class Energoton(IdMixin):
 
     def _build_plans(self, task, plan, tasks, plans):
         if task is not None:
-            energy_spent = self.work(task)
-            task = self._task_done(task, plan, tasks, energy_spent)
+            work_done = self.work(task)
+            plan.append(work_done)
+            if task.is_solved:
+                tasks.remove(task)
 
         can_continue = False
         for t in copy.copy(tasks):
@@ -28,19 +30,13 @@ class Energoton(IdMixin):
             plans.append(copy.copy(plan))
 
         if task is not None:
-            if isinstance(task, PartTask):
-                if task.is_solved:
-                    tasks.append(task.task)
-            else:
+            if task.is_solved:
                 tasks.append(task)
 
-            plan.remove(task)
-            self.energy_left += energy_spent
+            plan.remove(work_done)
+            self.energy_left += work_done.amount
 
-            if isinstance(task, PartTask):
-                task.drop()
-            else:
-                task.spent -= energy_spent
+            work_done.drop()
 
     def build_plans(self, pool):
         plans = []
@@ -51,9 +47,10 @@ class Energoton(IdMixin):
 
     def work(self, task):
         energy_spent = min(self.energy_left, task.todo)
-        task.spent += energy_spent
         self.energy_left -= energy_spent
-        return energy_spent
+        work_done = task.work_done(energy_spent, self)
+
+        return work_done
 
 
 class DeterministicEnergoton(Energoton):
@@ -67,24 +64,9 @@ class DeterministicEnergoton(Energoton):
             return True
         return False
 
-    def _task_done(self, task, plan, tasks, _):
-        plan.append(copy.copy(task))
-        tasks.remove(task)
-        return task
-
 
 class NonDeterministicEnergoton(Energoton):
     def can_solve(self, task):
         if self.energy_left > 0 and not task.is_blocked and task.is_actual:
             return True
         return False
-
-    def _task_done(self, task, plan, tasks, energy_spent):
-        if task.is_solved:
-            tasks.remove(task)
-            plan.append(copy.copy(task))
-        else:
-            task = task.part(energy_spent)
-            plan.append(task)
-
-        return task

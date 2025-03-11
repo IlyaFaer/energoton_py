@@ -18,11 +18,11 @@ class Plan(list):
 
     @property
     def energy_spent(self):
-        return sum(t.spent for t in self)
+        return sum(work.amount for work in self)
 
     @property
     def value(self):
-        return sum(t.priority.value for t in self)
+        return sum(t.task.priority.value for t in self)
 
 
 class Planner(list):
@@ -76,18 +76,9 @@ class Planner(list):
 
     def pool_after_plan(self, plan):
         pool = copy.deepcopy(self._pool)
-        for task in plan:
-            if task.is_solved:
-                pool.pop(task.id)
-            else:
-                pool.get(task.task.id).spent += task.part_done
-                if task.task.is_solved:
-                    pool.pop(task.task.id)
+        tasks = pool.as_dict
 
-            if (
-                pool.id != task.parent.id
-                and pool.get(task.parent.id).is_solved
-            ):
-                pool.pop(task.parent.id)
+        for work_done in plan:
+            tasks[work_done.task.id]._work_done.append(work_done)
 
         return pool

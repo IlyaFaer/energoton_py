@@ -4,24 +4,26 @@ from .priority import NoPriority
 from .work_unit import WorkUnit
 
 
-class PartTask(IdMixin):
-    def __init__(self, id_, task, part_done):
+class WorkDone(IdMixin):
+    def __init__(self, id_, task, energy_spent, assignee):
         self.task = task
-        self.part_done = part_done
+        self.amount = energy_spent
+        self.assignee = assignee
 
         super().__init__(id_)
 
-    def __getattr__(self, name):
-        if name == "part_done":
-            return self.part_done
-        return getattr(self.task, name)
-
     def __repr__(self):
-        return f"PartTask(task={self.task}, part_done={self.part_done})"
+        return f"WorkDone(task={self.task}, amount={self.amount})"
+
+    def __eq__(self, other):
+        return (
+            self.task == other.task
+            and self.amount == other.amount
+            and self.assignee == other.assignee
+        )
 
     def drop(self):
-        self.task.spent -= self.part_done
-        self.task.drop_part(self)
+        self.task.drop_work_done(self)
 
 
 class Task(WorkUnit):
@@ -34,17 +36,17 @@ class Task(WorkUnit):
         id_=None,
         name=None,
     ):
-        self._parts = []
-        self.spent = 0
-
+        self._work_done = []
         self.cost = cost
 
         super().__init__(custom_fields, parent, priority, id_, name)
 
     def __repr__(self):
-        return (
-            f"Task(name='{self.name}', cost={self.cost}, spent={self.spent})"
-        )
+        return f"Task(name='{self.name}', cost={self.cost})"
+
+    @property
+    def spent(self):
+        return sum(w.amount for w in self._work_done)
 
     @property
     def is_solved(self):
@@ -54,14 +56,15 @@ class Task(WorkUnit):
     def todo(self):
         return self.cost - self.spent
 
-    def drop_part(self, part):
-        self._parts.remove(part)
+    def drop_work_done(self, energy_spent):
+        self._work_done.remove(energy_spent)
 
-    def part(self, part_done):
-        part = PartTask(
-            str(self.id) + "-part-" + str(len(self._parts) + 1),
+    def work_done(self, energy_spent, energoton):
+        work_done = WorkDone(
+            str(self.id) + "-work_done-" + str(len(self._work_done) + 1),
             self,
-            part_done,
+            energy_spent,
+            energoton,
         )
-        self._parts.append(part)
-        return part
+        self._work_done.append(work_done)
+        return work_done

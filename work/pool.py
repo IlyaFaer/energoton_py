@@ -90,3 +90,11 @@ class Pool(WorkUnit):
                 child = task.parent.pop(task.id)
 
         return child
+
+    @property
+    def as_dict(self):
+        dict_ = {}
+        for t in self.flat_tasks():
+            dict_[t.id] = t
+
+        return dict_

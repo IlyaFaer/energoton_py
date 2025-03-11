@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 from work import Pool, Task
 
@@ -73,7 +74,7 @@ class TestPool(unittest.TestCase):
         self.assertEqual(len(pool), 0)
 
     def test_iter(self):
-        tasks = [Task(f"Task {i}", i, id_=i) for i in range(5)]
+        tasks = [Task(i, id_=i) for i in range(5)]
         pool = Pool(children=tasks, name="Pool 1")
 
         for task in pool:
@@ -82,19 +83,19 @@ class TestPool(unittest.TestCase):
         self.assertEqual(len(pool), len(tasks))
 
     def test_is_solved(self):
-        tasks = [Task(f"Task {i}", i, id_=i) for i in range(5)]
+        tasks = [Task(i, id_=i) for i in range(5)]
         pool = Pool(children=tasks, name="Pool 1")
 
         self.assertFalse(pool.is_solved)
 
         for task in tasks:
-            task.spent = task.cost
+            task.work_done(task.cost, mock.Mock())
 
         self.assertTrue(pool.is_solved)
 
     def test_done(self):
         task1 = Task(10, name="Task 1")
-        task1.spent = 10
+        task1.work_done(10, mock.Mock())
 
         task2 = Task(20, name="Task 2")
 
@@ -106,7 +107,7 @@ class TestPool(unittest.TestCase):
     def test_composite(self):
         task1 = Task(10, name="Task 1")
         task2 = Task(20, name="Task 2")
-        task2.spent = 20
+        task2.work_done(20, mock.Mock())
         pool1 = Pool(children=[task1, task2], name="Pool 1")
 
         task3 = Task(30, name="Task 3")
@@ -115,7 +116,7 @@ class TestPool(unittest.TestCase):
 
         task5 = Task(50, name="Task 5")
         task6 = Task(60, name="Task 6")
-        task6.spent = 60
+        task6.work_done(60, mock.Mock())
 
         root_pool = Pool(
             children=[pool1, pool2, task5, task6], name="Root Pool"
@@ -127,16 +128,16 @@ class TestPool(unittest.TestCase):
         self.assertEqual(list(root_pool.done), [task6])
 
         # make the first pool solved
-        task1.spent = 10
+        task1.work_done(10, mock.Mock())
         self.assertEqual(list(root_pool.todo), [pool2, task5])
 
         # make the second pool solved
-        task3.spent = 30
-        task4.spent = 40
+        task3.work_done(30, mock.Mock())
+        task4.work_done(40, mock.Mock())
         self.assertEqual(list(root_pool.todo), [task5])
 
         # make the last task solved
-        task5.spent = 50
+        task5.work_done(50, mock.Mock())
         self.assertTrue(root_pool.is_solved)
 
         self.assertEqual(list(root_pool.done), [pool1, pool2, task5, task6])

@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 
 from work import Alternative, Task
 
@@ -9,11 +10,12 @@ class TestTask(unittest.TestCase):
         self.assertFalse(task.is_solved)
         self.assertEqual(task.todo, 10)
 
-        task.spent = 10
+        task.work_done(10, mock.Mock())
         self.assertTrue(task.is_solved)
         self.assertEqual(task.todo, 0)
 
-        task.spent = 5
+        task._work_done = []
+        task.work_done(5, mock.Mock())
         self.assertFalse(task.is_solved)
         self.assertEqual(task.todo, 5)
 
@@ -27,13 +29,13 @@ class TestTask(unittest.TestCase):
         self.assertFalse(rel.is_solved)
         self.assertTrue(t1.is_actual)
 
-        t1.spent = 2
+        t1.work_done(2, mock.Mock())
         self.assertTrue(rel.is_solved)
         self.assertFalse(t2.is_actual)
         self.assertFalse(t3.is_actual)
 
-        t1.spent = 0
-        t2.spent = 2
+        t1._work_done = []
+        t2.work_done(2, mock.Mock())
         self.assertTrue(rel.is_solved)
         self.assertFalse(t1.is_actual)
         self.assertFalse(t3.is_actual)
@@ -41,23 +43,21 @@ class TestTask(unittest.TestCase):
     def test_part_done(self):
         task = Task(8, name="Task 1")
 
-        task.spent = 5
-        part = task.part(5)
+        work_done = task.work_done(5, mock.Mock())
 
-        self.assertEqual(part.part_done, 5)
-        self.assertEqual(part.spent, 5)
-        self.assertEqual(part.todo, 3)
-        self.assertEqual(part.name, "Task 1")
+        self.assertEqual(work_done.amount, 5)
+        self.assertEqual(work_done.task.spent, 5)
+        self.assertEqual(work_done.task.todo, 3)
+        self.assertEqual(work_done.task.name, "Task 1")
 
 
 class TestPartTask(unittest.TestCase):
     def test_part(self):
         task = Task(10, name="Task 1")
 
-        task.spent = 5
-        part = task.part(5)
+        done = task.work_done(5, mock.Mock())
 
-        self.assertEqual(part.part_done, 5)
-        self.assertEqual(part.spent, 5)
-        self.assertEqual(part.todo, 5)
-        self.assertEqual(part.name, "Task 1")
+        self.assertEqual(done.amount, 5)
+        self.assertEqual(done.task.spent, 5)
+        self.assertEqual(done.task.todo, 5)
+        self.assertEqual(done.task.name, "Task 1")

@@ -5,15 +5,16 @@ from .work_unit import WorkUnit
 
 
 class WorkDone(IdMixin):
-    def __init__(self, id_, task, energy_spent, assignee):
+    def __init__(self, id_, task, energy_spent, assignee, cycle=1):
         self.task = task
         self.amount = energy_spent
         self.assignee = assignee
+        self.cycle = cycle
 
         super().__init__(id_)
 
     def __repr__(self):
-        return f"WorkDone(task={self.task}, amount={self.amount})"
+        return f"WorkDone(task={self.task}, amount={self.amount}, cycle={self.cycle})"
 
     def __eq__(self, other):
         return (
@@ -59,12 +60,13 @@ class Task(WorkUnit):
     def drop_work_done(self, energy_spent):
         self._work_done.remove(energy_spent)
 
-    def work_done(self, energy_spent, energoton):
+    def work_done(self, energy_spent, energoton, cycle=1):
         work_done = WorkDone(
             str(self.id) + "-work_done-" + str(len(self._work_done) + 1),
             self,
             energy_spent,
             energoton,
+            cycle,
         )
         self._work_done.append(work_done)
         return work_done

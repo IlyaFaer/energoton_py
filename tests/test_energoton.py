@@ -110,10 +110,10 @@ class TestEnergoton(unittest.TestCase):
         )
 
     def test_build_plans_non_deterministic(self):
-        pool = Pool(name="Pool")
-        t1 = Task(5, id_="1", name="Task 1")
-        t2 = Task(2, id_="2", name="Task 2")
-        t3 = Task(4, id_="3", name="Task 3")
+        pool = Pool()
+        t1 = Task(5, id_="1")
+        t2 = Task(2, id_="2")
+        t3 = Task(4, id_="3")
 
         pool.add(t1)
         pool.add(t2)

@@ -35,23 +35,28 @@ class Planner(list):
     def _deduplicate_plans(self, plans):
         unique_plans = []
         for plan in plans:
-            plan = Plan(sorted(plan, key=lambda t: t.id))
-            if plan not in unique_plans:
-                unique_plans.append(plan)
+            c_plan = Plan(sorted(plan, key=lambda t: t.id))
+            if c_plan not in unique_plans:
+                unique_plans.append(c_plan)
 
         return unique_plans
 
-    def build_plans(self):
-        for e in self._energotons:
-            if self._plans == []:
-                self._plans = e.build_plans(self._pool)
-            else:
-                new_plans = []
-                for plan in self._plans:
-                    new_plans.extend(
-                        e.build_plans(self.pool_after_plans([plan]), plan)
-                    )
-                self._plans = new_plans
+    def build_plans(self, cycles=1):
+        for c in range(cycles):
+            for e in self._energotons:
+                if self._plans == []:
+                    self._plans = e.build_plans(self._pool, c + 1)
+                else:
+                    new_plans = []
+                    for plan in self._plans:
+                        new_plans.extend(
+                            e.build_plans(
+                                self.pool_after_plans([plan]), c + 1, plan
+                            )
+                        )
+                    self._plans = new_plans
+
+                e.recharge()
 
         return self._plans
 
@@ -94,3 +99,35 @@ class Planner(list):
                 tasks[work_done.task.id]._work_done.append(work_done)
 
         return pool
+
+    @staticmethod
+    def by_cycles(plans):
+        by_cycles = []
+        for plan in plans:
+            new_plan = {}
+            for work_done in plan:
+                if work_done.cycle not in new_plan:
+                    new_plan[work_done.cycle] = []
+
+                new_plan[work_done.cycle].append(work_done)
+
+            by_cycles.append(new_plan)
+
+        return by_cycles
+
+    @staticmethod
+    def by_assignees(plans):
+        by_assignees = []
+        for plan in plans:
+            new_plan = {}
+            for work_done in plan:
+                as_id = work_done.assignee.id
+
+                if as_id not in new_plan:
+                    new_plan[as_id] = []
+
+                new_plan[as_id].append(work_done)
+
+            by_assignees.append(new_plan)
+
+        return by_assignees

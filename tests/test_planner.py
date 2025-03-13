@@ -271,3 +271,148 @@ class TestPlanner(unittest.TestCase):
                 work_done.append((work.assignee.id, work.task.id, work.amount))
 
             self.assertEqual(work_done, result)
+
+    def test_several_cycles(self):
+        pool = Pool()
+
+        t1 = Task(5, id_="1")
+        t2 = Task(2, id_="2")
+        t3 = Task(4, id_="3")
+        t4 = Task(2, id_="4")
+        t5 = Task(6, id_="5")
+
+        pool.add(t1)
+        pool.add(t2)
+        pool.add(t3)
+        pool.add(t4)
+        pool.add(t5)
+
+        e = DeterministicEnergoton(8)
+
+        planner = Planner([e], pool)
+        planner.build_plans(cycles=2)
+        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+
+        self.assertEqual(
+            plans,
+            (
+                [
+                    WorkDone(None, t1, 5, e, 1),
+                    WorkDone(None, t2, 2, e, 1),
+                    WorkDone(None, t3, 4, e, 2),
+                    WorkDone(None, t4, 2, e, 2),
+                ],
+                [
+                    WorkDone(None, t1, 5, e, 1),
+                    WorkDone(None, t2, 2, e, 1),
+                    WorkDone(None, t4, 2, e, 2),
+                    WorkDone(None, t5, 6, e, 2),
+                ],
+                [
+                    WorkDone(None, t2, 2, e, 1),
+                    WorkDone(None, t3, 4, e, 1),
+                    WorkDone(None, t4, 2, e, 1),
+                    WorkDone(None, t5, 6, e, 2),
+                ],
+            ),
+        )
+
+    def test_by_cycles(self):
+        pool = Pool()
+
+        t1 = Task(5, id_="1")
+        t2 = Task(2, id_="2")
+        t3 = Task(4, id_="3")
+        t4 = Task(2, id_="4")
+        t5 = Task(6, id_="5")
+
+        pool.add(t1)
+        pool.add(t2)
+        pool.add(t3)
+        pool.add(t4)
+        pool.add(t5)
+
+        e = DeterministicEnergoton(8)
+
+        planner = Planner([e], pool)
+        planner.build_plans(cycles=2)
+        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+
+        by_cycles = planner.by_cycles(plans)
+        self.assertEqual(
+            by_cycles,
+            [
+                {
+                    1: [
+                        WorkDone(None, t1, 5, e, 1),
+                        WorkDone(None, t2, 2, e, 1),
+                    ],
+                    2: [
+                        WorkDone(None, t3, 4, e, 2),
+                        WorkDone(None, t4, 2, e, 2),
+                    ],
+                },
+                {
+                    1: [
+                        WorkDone(None, t1, 5, e, 1),
+                        WorkDone(None, t2, 2, e, 1),
+                    ],
+                    2: [
+                        WorkDone(None, t4, 2, e, 2),
+                        WorkDone(None, t5, 6, e, 2),
+                    ],
+                },
+                {
+                    1: [
+                        WorkDone(None, t2, 2, e, 1),
+                        WorkDone(None, t3, 4, e, 1),
+                        WorkDone(None, t4, 2, e, 1),
+                    ],
+                    2: [WorkDone(None, t5, 6, e, 2)],
+                },
+            ],
+        )
+
+    def test_by_assignees(self):
+        pool = Pool()
+
+        t1 = Task(5, id_="1")
+        t2 = Task(2, id_="2")
+        t3 = Task(4, id_="3")
+        t4 = Task(2, id_="4")
+        t5 = Task(6, id_="5")
+
+        pool.add(t1)
+        pool.add(t2)
+        pool.add(t3)
+        pool.add(t4)
+        pool.add(t5)
+
+        e1 = DeterministicEnergoton(4, id_="1")
+        e2 = DeterministicEnergoton(4, id_="2")
+
+        planner = Planner([e1, e2], pool)
+        planner.build_plans()
+        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+
+        by_assignees = planner.by_assignees(plans)
+
+        self.assertEqual(
+            by_assignees,
+            [
+                {
+                    "1": [
+                        WorkDone(None, t2, 2, e1),
+                        WorkDone(None, t4, 2, e1),
+                    ],
+                    "2": [WorkDone(None, t3, 4, e2)],
+                },
+                {
+                    "2": [
+                        WorkDone(None, t2, 2, e2),
+                        WorkDone(None, t4, 2, e2),
+                    ],
+                    "1": [WorkDone(None, t3, 4, e1)],
+                },
+            ],
+        )

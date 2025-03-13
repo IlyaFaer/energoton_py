@@ -30,9 +30,9 @@ class Energoton(IdMixin):
     def recharge(self):
         self.energy_left = self.next_charge
 
-    def _build_plans(self, task, plan, tasks, plans):
+    def _build_plans(self, task, plan, tasks, plans, cycle):
         if task is not None:
-            work_done = self.work(task)
+            work_done = self.work(task, cycle)
             plan.append(work_done)
             if task.is_solved:
                 tasks.remove(task)
@@ -40,7 +40,7 @@ class Energoton(IdMixin):
         can_continue = False
         for t in copy.copy(tasks):
             if self.can_solve(t):
-                self._build_plans(t, plan, tasks, plans)
+                self._build_plans(t, plan, tasks, plans, cycle)
                 can_continue = True
 
         if not can_continue:
@@ -55,20 +55,21 @@ class Energoton(IdMixin):
 
             work_done.drop()
 
-    def build_plans(self, pool, plan=None):
+    def build_plans(self, pool, cycle=1, plan=None):
         plans = []
         self._build_plans(
             task=None,
             plan=plan or Plan(),
             tasks=pool.flat_tasks(),
             plans=plans,
+            cycle=cycle,
         )
         return plans
 
-    def work(self, task):
+    def work(self, task, cycle=1):
         energy_spent = min(self.energy_left, task.todo)
         self.energy_left -= energy_spent
-        work_done = task.work_done(energy_spent, self)
+        work_done = task.work_done(energy_spent, self, cycle)
 
         return work_done
 

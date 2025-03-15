@@ -2,8 +2,7 @@ import unittest
 
 from energoton import DeterministicEnergoton, NonDeterministicEnergoton
 from work import Alternative, Blocking, Pool, Task, WorkDone
-
-None,
+from energoton.planner import Plan
 
 
 class TestEnergoton(unittest.TestCase):
@@ -43,68 +42,96 @@ class TestEnergoton(unittest.TestCase):
         self.assertEqual(
             plans,
             [
-                [
-                    WorkDone(None, t1, 5, e),
-                    WorkDone(None, t2, 2, e),
-                ],
-                [
-                    WorkDone(None, t1, 5, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t5, 6, e),
-                ],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t3, 4, e),
-                ],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t1, 5, e),
-                ],
-                [
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t2, 2, e),
-                ],
-                [
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t5, 6, e),
-                ],
-                [
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t1, 5, e),
-                ],
-                [
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                ],
-                [
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t2, 2, e),
-                ],
-                [
-                    WorkDone(None, t5, 6, e),
-                    WorkDone(None, t2, 2, e),
-                ],
-                [
-                    WorkDone(None, t5, 6, e),
-                    WorkDone(None, t4, 2, e),
-                ],
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e),
+                        WorkDone(None, t2, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t5, 6, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t1, 5, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t2, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t5, 6, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t1, 5, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t2, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t5, 6, e),
+                        WorkDone(None, t2, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t5, 6, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
             ],
         )
 
@@ -121,37 +148,56 @@ class TestEnergoton(unittest.TestCase):
         e = NonDeterministicEnergoton(8)
         plans = e.build_plans(pool)
 
+        plan = Plan(
+            [
+                WorkDone(None, t1, 5, e),
+                WorkDone(None, t3, 3, e),
+            ]
+        )
+
         self.assertEqual(
             plans,
             [
-                [
-                    WorkDone(None, t1, 5, e),
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 1, e),
-                ],
-                [
-                    WorkDone(None, t1, 5, e),
-                    WorkDone(None, t3, 3, e),
-                ],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t1, 2, e),
-                ],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t1, 5, e),
-                    WorkDone(None, t3, 1, e),
-                ],
-                [
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t1, 4, e),
-                ],
-                [
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t1, 2, e),
-                ],
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 1, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e),
+                        WorkDone(None, t3, 3, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 2, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 1, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 4, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 2, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
             ],
         )
 
@@ -177,16 +223,16 @@ class TestEnergoton(unittest.TestCase):
         self.assertEqual(
             plans,
             [
-                [WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t4, 2, e)],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t1, 5, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t1, 5, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t5, 6, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)],
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t4, 2, e)]),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t1, 5, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t1, 5, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)]),
             ],
         )
 
@@ -212,42 +258,54 @@ class TestEnergoton(unittest.TestCase):
         self.assertEqual(
             plans,
             [
-                [WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t3, 4, e),
-                ],
-                [
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t2, 2, e),
-                ],
-                [
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t1, 5, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)],
-                [
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                ],
-                [
-                    WorkDone(None, t4, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t2, 2, e),
-                ],
-                [WorkDone(None, t5, 6, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)],
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t2, 2, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t1, 5, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan(
+                    [
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t4, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t2, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)]),
             ],
         )
 

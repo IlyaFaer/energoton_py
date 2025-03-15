@@ -18,9 +18,10 @@ class WorkDone(IdMixin):
 
     def __eq__(self, other):
         return (
-            self.task == other.task
+            self.task.id == other.task.id
             and self.amount == other.amount
             and self.assignee == other.assignee
+            and self.cycle == other.cycle
         )
 
     def drop(self):

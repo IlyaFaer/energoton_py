@@ -25,15 +25,3 @@ class TestPlan(unittest.TestCase):
         plan = Plan(work_done)
 
         self.assertEqual(plan.value, 31)
-
-    def test_len(self):
-        tasks = [Task(10) for _ in range(5)]
-        plan1 = Plan(tasks)
-        self.assertEqual(len(plan1), 5)
-
-        pool = Pool(children=tasks)
-        plan = Plan([pool])
-        self.assertEqual(len(plan), 5)
-
-        pool.add(Task(10, id_=6))
-        self.assertEqual(len(plan), 6)

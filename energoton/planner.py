@@ -35,7 +35,7 @@ class Planner(list):
     def _deduplicate_plans(self, plans):
         unique_plans = []
         for plan in plans:
-            c_plan = Plan(sorted(plan, key=lambda t: t.id))
+            c_plan = Plan(sorted(plan, key=lambda w: (w.cycle, w.id)))
             if c_plan not in unique_plans:
                 unique_plans.append(c_plan)
 
@@ -68,7 +68,7 @@ class Planner(list):
         if ignore_task_order:
             plans = self._deduplicate_plans(plans)
 
-        if sort_by in ("value", "energy_spent", "length"):
+        if sort_by in ("value", "energy_spent"):
             plans.sort(key=lambda p: getattr(p, sort_by), reverse=True)
 
             if only_best:
@@ -76,7 +76,7 @@ class Planner(list):
 
         elif sort_by is not None:
             raise ValueError(
-                f"'sort_by' argument must be one of: ['value', 'energy_spent', 'length', None]"
+                f"'sort_by' argument must be one of: ['value', 'energy_spent', None]"
             )
 
         return tuple(plans)

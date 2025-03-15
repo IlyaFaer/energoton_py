@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from energoton import DeterministicEnergoton, NonDeterministicEnergoton
-from energoton.planner import Planner
+from energoton.planner import Planner, Plan
 from work import Pool, Task, WorkDone
 from work.priority import ExponentialPriority
 
@@ -31,64 +31,17 @@ class TestPlanner(unittest.TestCase):
         self.assertEqual(
             plans,
             (
-                [WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)],
-            ),
-        )
-
-    def test_sort_by_length(self):
-        pool = Pool()
-        t1 = Task(5, id_="1")
-        t2 = Task(2, id_="2")
-        t3 = Task(4, id_="3")
-        t4 = Task(2, id_="4")
-        t5 = Task(6, id_="5")
-
-        pool.add(t1)
-        pool.add(t2)
-        pool.add(t3)
-        pool.add(t4)
-        pool.add(t5)
-
-        e = DeterministicEnergoton(8)
-
-        planner = Planner([e], pool)
-        planner.build_plans()
-        plans = planner.filter_plans(ignore_task_order=True, sort_by="length")
-
-        self.assertEqual(
-            plans,
-            (
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                mock.ANY,
-                mock.ANY,
-                mock.ANY,
-                mock.ANY,
-            ),
-        )
-
-        plans = planner.filter_plans(
-            ignore_task_order=True, sort_by="length", only_best=True
-        )
-        self.assertEqual(
-            plans,
-            (
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
             ),
         )
 
@@ -135,15 +88,17 @@ class TestPlanner(unittest.TestCase):
         self.assertEqual(
             plans,
             (
-                [WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)],
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)],
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
             ),
         )
 
@@ -151,7 +106,8 @@ class TestPlanner(unittest.TestCase):
             ignore_task_order=True, sort_by="value", only_best=True
         )
         self.assertEqual(
-            plans, ([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)],)
+            plans,
+            (Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),),
         )
 
     def test_sort_by_energy_spent(self):
@@ -179,15 +135,17 @@ class TestPlanner(unittest.TestCase):
         self.assertEqual(
             plans,
             (
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)],
-                [WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)],
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
+                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
             ),
         )
 
@@ -197,13 +155,15 @@ class TestPlanner(unittest.TestCase):
         self.assertEqual(
             plans,
             (
-                [
-                    WorkDone(None, t2, 2, e),
-                    WorkDone(None, t3, 4, e),
-                    WorkDone(None, t4, 2, e),
-                ],
-                [WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)],
-                [WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)],
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t3, 4, e),
+                        WorkDone(None, t4, 2, e),
+                    ]
+                ),
+                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
+                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
             ),
         )
 
@@ -223,9 +183,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], root_pool)
         planner.build_plans()
-        plans = planner.filter_plans(
-            ignore_task_order=True, sort_by="length", only_best=True
-        )
+        plans = planner.filter_plans(ignore_task_order=True, only_best=True)
 
         result_pool = planner.pool_after_plan(plans[0])
         self.assertTrue(result_pool.children[t3.id].is_solved)
@@ -255,9 +213,7 @@ class TestPlanner(unittest.TestCase):
             root_pool,
         )
         planner.build_plans()
-        plans = planner.filter_plans(
-            ignore_task_order=True, sort_by="length", only_best=True
-        )
+        plans = planner.filter_plans(ignore_task_order=True, only_best=True)
 
         for plan, result in zip(
             plans,
@@ -279,13 +235,11 @@ class TestPlanner(unittest.TestCase):
         t2 = Task(2, id_="2")
         t3 = Task(4, id_="3")
         t4 = Task(2, id_="4")
-        t5 = Task(6, id_="5")
 
         pool.add(t1)
         pool.add(t2)
         pool.add(t3)
         pool.add(t4)
-        pool.add(t5)
 
         e = DeterministicEnergoton(8)
 
@@ -296,24 +250,30 @@ class TestPlanner(unittest.TestCase):
         self.assertEqual(
             plans,
             (
-                [
-                    WorkDone(None, t1, 5, e, 1),
-                    WorkDone(None, t2, 2, e, 1),
-                    WorkDone(None, t3, 4, e, 2),
-                    WorkDone(None, t4, 2, e, 2),
-                ],
-                [
-                    WorkDone(None, t1, 5, e, 1),
-                    WorkDone(None, t2, 2, e, 1),
-                    WorkDone(None, t4, 2, e, 2),
-                    WorkDone(None, t5, 6, e, 2),
-                ],
-                [
-                    WorkDone(None, t2, 2, e, 1),
-                    WorkDone(None, t3, 4, e, 1),
-                    WorkDone(None, t4, 2, e, 1),
-                    WorkDone(None, t5, 6, e, 2),
-                ],
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e, 1),
+                        WorkDone(None, t2, 2, e, 1),
+                        WorkDone(None, t3, 4, e, 2),
+                        WorkDone(None, t4, 2, e, 2),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t1, 5, e, 1),
+                        WorkDone(None, t4, 2, e, 1),
+                        WorkDone(None, t2, 2, e, 2),
+                        WorkDone(None, t3, 4, e, 2),
+                    ]
+                ),
+                Plan(
+                    [
+                        WorkDone(None, t2, 2, e, 1),
+                        WorkDone(None, t3, 4, e, 1),
+                        WorkDone(None, t4, 2, e, 1),
+                        WorkDone(None, t1, 5, e, 2),
+                    ]
+                ),
             ),
         )
 
@@ -323,14 +283,10 @@ class TestPlanner(unittest.TestCase):
         t1 = Task(5, id_="1")
         t2 = Task(2, id_="2")
         t3 = Task(4, id_="3")
-        t4 = Task(2, id_="4")
-        t5 = Task(6, id_="5")
 
         pool.add(t1)
         pool.add(t2)
         pool.add(t3)
-        pool.add(t4)
-        pool.add(t5)
 
         e = DeterministicEnergoton(8)
 
@@ -349,26 +305,16 @@ class TestPlanner(unittest.TestCase):
                     ],
                     2: [
                         WorkDone(None, t3, 4, e, 2),
-                        WorkDone(None, t4, 2, e, 2),
-                    ],
-                },
-                {
-                    1: [
-                        WorkDone(None, t1, 5, e, 1),
-                        WorkDone(None, t2, 2, e, 1),
-                    ],
-                    2: [
-                        WorkDone(None, t4, 2, e, 2),
-                        WorkDone(None, t5, 6, e, 2),
                     ],
                 },
                 {
                     1: [
                         WorkDone(None, t2, 2, e, 1),
                         WorkDone(None, t3, 4, e, 1),
-                        WorkDone(None, t4, 2, e, 1),
                     ],
-                    2: [WorkDone(None, t5, 6, e, 2)],
+                    2: [
+                        WorkDone(None, t1, 5, e, 2),
+                    ],
                 },
             ],
         )
@@ -376,17 +322,13 @@ class TestPlanner(unittest.TestCase):
     def test_by_assignees(self):
         pool = Pool()
 
-        t1 = Task(5, id_="1")
-        t2 = Task(2, id_="2")
-        t3 = Task(4, id_="3")
-        t4 = Task(2, id_="4")
-        t5 = Task(6, id_="5")
+        t1 = Task(2, id_="2")
+        t2 = Task(4, id_="3")
+        t3 = Task(2, id_="4")
 
         pool.add(t1)
         pool.add(t2)
         pool.add(t3)
-        pool.add(t4)
-        pool.add(t5)
 
         e1 = DeterministicEnergoton(4, id_="1")
         e2 = DeterministicEnergoton(4, id_="2")
@@ -402,17 +344,17 @@ class TestPlanner(unittest.TestCase):
             [
                 {
                     "1": [
-                        WorkDone(None, t2, 2, e1),
-                        WorkDone(None, t4, 2, e1),
+                        WorkDone(None, t1, 2, e1),
+                        WorkDone(None, t3, 2, e1),
                     ],
-                    "2": [WorkDone(None, t3, 4, e2)],
+                    "2": [WorkDone(None, t2, 4, e2)],
                 },
                 {
                     "2": [
-                        WorkDone(None, t2, 2, e2),
-                        WorkDone(None, t4, 2, e2),
+                        WorkDone(None, t1, 2, e2),
+                        WorkDone(None, t3, 2, e2),
                     ],
-                    "1": [WorkDone(None, t3, 4, e1)],
+                    "1": [WorkDone(None, t2, 4, e1)],
                 },
             ],
         )

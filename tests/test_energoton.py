@@ -148,13 +148,6 @@ class TestEnergoton(unittest.TestCase):
         e = NonDeterministicEnergoton(8)
         plans = e.build_plans(pool)
 
-        plan = Plan(
-            [
-                WorkDone(None, t1, 5, e),
-                WorkDone(None, t3, 3, e),
-            ]
-        )
-
         self.assertEqual(
             plans,
             [
@@ -173,29 +166,29 @@ class TestEnergoton(unittest.TestCase):
                 ),
                 Plan(
                     [
-                        WorkDone(None, t1, 2, e),
                         WorkDone(None, t2, 2, e),
                         WorkDone(None, t3, 4, e),
+                        WorkDone(None, t1, 2, e),
                     ]
                 ),
                 Plan(
                     [
-                        WorkDone(None, t1, 5, e),
                         WorkDone(None, t2, 2, e),
+                        WorkDone(None, t1, 5, e),
                         WorkDone(None, t3, 1, e),
                     ]
                 ),
                 Plan(
                     [
-                        WorkDone(None, t1, 4, e),
                         WorkDone(None, t3, 4, e),
+                        WorkDone(None, t1, 4, e),
                     ]
                 ),
                 Plan(
                     [
-                        WorkDone(None, t1, 2, e),
-                        WorkDone(None, t2, 2, e),
                         WorkDone(None, t3, 4, e),
+                        WorkDone(None, t2, 2, e),
+                        WorkDone(None, t1, 2, e),
                     ]
                 ),
             ],

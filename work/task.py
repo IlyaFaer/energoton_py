@@ -43,7 +43,7 @@ class Task(WorkUnit):
         super().__init__(custom_fields, parent, priority, id_, name)
 
     def __repr__(self):
-        return f"Task(name='{self.name}', cost={self.cost})"
+        return f"Task(id_='{self.id}', name='{self.name}', cost={self.cost})"
 
     @property
     def spent(self):

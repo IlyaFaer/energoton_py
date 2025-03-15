@@ -1,5 +1,4 @@
 import unittest
-from unittest import mock
 
 from energoton import DeterministicEnergoton, NonDeterministicEnergoton
 from work import Alternative, Blocking, Pool, Task, WorkDone

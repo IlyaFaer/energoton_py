@@ -51,7 +51,7 @@ class Planner(list):
                     for plan in self._plans:
                         new_plans.extend(
                             e.build_plans(
-                                self.pool_after_plans([plan]), c + 1, plan
+                                self.pool_after_plan(plan), c + 1, plan
                             )
                         )
                     self._plans = new_plans
@@ -90,13 +90,12 @@ class Planner(list):
 
         return plans[:i]
 
-    def pool_after_plans(self, plans):
+    def pool_after_plan(self, plan):
         pool = copy.deepcopy(self._pool)
         tasks = pool.as_dict
 
-        for plan in plans:
-            for work_done in plan:
-                tasks[work_done.task.id]._work_done.append(work_done)
+        for work_done in plan:
+            tasks[work_done.task.id]._work_done.append(work_done)
 
         return pool
 

@@ -129,7 +129,7 @@ A plan built by a planner consists of objects `WorkDone`, each of which represen
 * *cycle* - number of the work cycle, at which work is planned to be done
 
 **Advanced Features**  
-The package includes more interesting functionality e.g. **Relations**, which allow to run planning in more complex cases. To see how they work (with detailed comments), check out the samples. You are also welcome to study the Energoton formal model.
+The package includes more interesting functionality e.g. **Relations**, which allow to run planning in more complex cases. To see how they work (with detailed comments), check out the [samples](https://github.com/IlyaFaer/energoton/tree/main/samples). You are also welcome to study the Energoton formal model in this [concept brochure](https://docs.google.com/document/d/1qSr1LRrfzFkJYoJUsLwi7DLwz6v3poVYMY_cnEyMLn8/edit?usp=sharing).
 
 ## Early Version Warning
 This package is in **alpha** development stage. It may contain errors, performance issues, inconveniences and can introduce breaking changes. Use it cautiously and report any findings and ideas.

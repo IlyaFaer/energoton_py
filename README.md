@@ -122,7 +122,7 @@ plans = planner.build_plans(cycles=5)
 ```
 
 **WorkDone**  
-A plan built by a planner consists of objects `WorkDone`, each of which represents a piece of planned word and includes the following fields:
+A plan built by a planner consists of objects `WorkDone`, each of which represents a piece of planned work and includes the following fields:
 * *task* - target task
 * *energy_spent* - amount of energy that's going to be spent
 * *assignee* - energoton that's going to spend this energy

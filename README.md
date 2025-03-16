@@ -1,4 +1,4 @@
-**energoton** is a Python package that automates task planning. Init workers with energy capacity, create tasks with energy cost, and the package will build a work plan, considering priorities and relations between tasks.
+**energoton_py** is a Python package that automates task planning. Init workers with energy capacity, create tasks with energy cost, and the package will build a work plan, considering priorities and relations between tasks.
 
 ## About
 **What's energoton?**  

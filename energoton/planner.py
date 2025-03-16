@@ -32,15 +32,6 @@ class Planner(list):
 
         self._plans = []
 
-    def _deduplicate_plans(self, plans):
-        unique_plans = []
-        for plan in plans:
-            c_plan = Plan(sorted(plan, key=lambda w: (w.cycle, w.id)))
-            if c_plan not in unique_plans:
-                unique_plans.append(c_plan)
-
-        return unique_plans
-
     def build_plans(self, cycles=1):
         for c in range(cycles):
             for e in self._energotons:
@@ -60,13 +51,8 @@ class Planner(list):
 
         return self._plans
 
-    def filter_plans(
-        self, ignore_task_order=False, sort_by="value", only_best=False
-    ):
+    def filter_plans(self, sort_by="value", only_best=False):
         plans = self._plans
-
-        if ignore_task_order:
-            plans = self._deduplicate_plans(plans)
 
         if sort_by in ("value", "energy_spent"):
             plans.sort(key=lambda p: getattr(p, sort_by), reverse=True)

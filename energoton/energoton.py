@@ -44,7 +44,9 @@ class Energoton(IdMixin):
                 can_continue = True
 
         if not can_continue:
-            plans.append(copy.copy(plan))
+            sorted_plan = Plan(sorted(plan, key=lambda w: w.task.id))
+            if sorted_plan not in plans:
+                plans.append(sorted_plan)
 
         if task is not None:
             if task.is_solved:

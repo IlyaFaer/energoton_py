@@ -14,7 +14,7 @@ class WorkDone(IdMixin):
         super().__init__(id_)
 
     def __repr__(self):
-        return f"WorkDone(task={self.task}, amount={self.amount}, cycle={self.cycle})"
+        return f"WorkDone(task={self.task}, amount={self.amount}, cycle={self.cycle}, assignee='{self.assignee.id}')"
 
     def __eq__(self, other):
         return (
@@ -26,6 +26,9 @@ class WorkDone(IdMixin):
 
     def drop(self):
         self.task.drop_work_done(self)
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 class Task(WorkUnit):

@@ -69,67 +69,8 @@ class TestEnergoton(unittest.TestCase):
                 ),
                 Plan(
                     [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t3, 4, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t1, 5, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t2, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
                         WorkDone(None, t4, 2, e),
                         WorkDone(None, t5, 6, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t1, 5, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t2, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t5, 6, e),
-                        WorkDone(None, t2, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t5, 6, e),
-                        WorkDone(None, t4, 2, e),
                     ]
                 ),
             ],
@@ -166,29 +107,15 @@ class TestEnergoton(unittest.TestCase):
                 ),
                 Plan(
                     [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
                         WorkDone(None, t1, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
                         WorkDone(None, t2, 2, e),
-                        WorkDone(None, t1, 5, e),
-                        WorkDone(None, t3, 1, e),
+                        WorkDone(None, t3, 4, e),
                     ]
                 ),
                 Plan(
                     [
-                        WorkDone(None, t3, 4, e),
                         WorkDone(None, t1, 4, e),
-                    ]
-                ),
-                Plan(
-                    [
                         WorkDone(None, t3, 4, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t1, 2, e),
                     ]
                 ),
             ],
@@ -196,11 +123,11 @@ class TestEnergoton(unittest.TestCase):
 
     def test_build_plans_blocked(self):
         pool = Pool()
-        t1 = Task(5)
-        t2 = Task(2)
-        t3 = Task(4)
-        t4 = Task(2)
-        t5 = Task(6)
+        t1 = Task(5, id_="1")
+        t2 = Task(2, id_="2")
+        t3 = Task(4, id_="3")
+        t4 = Task(2, id_="4")
+        t5 = Task(6, id_="5")
 
         pool.add(t1)
         pool.add(t2)
@@ -220,22 +147,17 @@ class TestEnergoton(unittest.TestCase):
                 Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
                 Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
                 Plan([WorkDone(None, t2, 2, e), WorkDone(None, t4, 2, e)]),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t1, 5, e)]),
                 Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t1, 5, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)]),
             ],
         )
 
     def test_build_plans_alternative(self):
         pool = Pool(name="Pool")
-        t1 = Task(5)
-        t2 = Task(2)
-        t3 = Task(4)
-        t4 = Task(2)
-        t5 = Task(6)
+        t1 = Task(5, id_="1")
+        t2 = Task(2, id_="2")
+        t3 = Task(4, id_="3")
+        t4 = Task(2, id_="4")
+        t5 = Task(6, id_="5")
 
         pool.add(t1)
         pool.add(t2)
@@ -260,45 +182,7 @@ class TestEnergoton(unittest.TestCase):
                     ]
                 ),
                 Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t3, 4, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t2, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t1, 5, e)]),
                 Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan(
-                    [
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t2, 2, e),
-                    ]
-                ),
-                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t5, 6, e), WorkDone(None, t4, 2, e)]),
             ],
         )
 

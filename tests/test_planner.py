@@ -26,7 +26,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], pool)
         planner.build_plans()
-        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+        plans = planner.filter_plans(sort_by=None)
 
         self.assertEqual(
             plans,
@@ -83,7 +83,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], pool)
         planner.build_plans()
-        plans = planner.filter_plans(ignore_task_order=True, sort_by="value")
+        plans = planner.filter_plans(sort_by="value")
 
         self.assertEqual(
             plans,
@@ -102,9 +102,7 @@ class TestPlanner(unittest.TestCase):
             ),
         )
 
-        plans = planner.filter_plans(
-            ignore_task_order=True, sort_by="value", only_best=True
-        )
+        plans = planner.filter_plans(sort_by="value", only_best=True)
         self.assertEqual(
             plans,
             (Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),),
@@ -128,9 +126,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], pool)
         planner.build_plans()
-        plans = planner.filter_plans(
-            ignore_task_order=True, sort_by="energy_spent"
-        )
+        plans = planner.filter_plans(sort_by="energy_spent")
 
         self.assertEqual(
             plans,
@@ -149,9 +145,7 @@ class TestPlanner(unittest.TestCase):
             ),
         )
 
-        plans = planner.filter_plans(
-            ignore_task_order=True, sort_by="energy_spent", only_best=True
-        )
+        plans = planner.filter_plans(sort_by="energy_spent", only_best=True)
         self.assertEqual(
             plans,
             (
@@ -183,7 +177,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], root_pool)
         planner.build_plans()
-        plans = planner.filter_plans(ignore_task_order=True, only_best=True)
+        plans = planner.filter_plans(only_best=True)
 
         result_pool = planner.pool_after_plan(plans[0])
         self.assertTrue(result_pool.children[t3.id].is_solved)
@@ -213,7 +207,7 @@ class TestPlanner(unittest.TestCase):
             root_pool,
         )
         planner.build_plans()
-        plans = planner.filter_plans(ignore_task_order=True, only_best=True)
+        plans = planner.filter_plans(only_best=True)
 
         for plan, result in zip(
             plans,
@@ -245,7 +239,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], pool)
         planner.build_plans(cycles=2)
-        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+        plans = planner.filter_plans(sort_by=None)
 
         self.assertEqual(
             plans,
@@ -261,17 +255,17 @@ class TestPlanner(unittest.TestCase):
                 Plan(
                     [
                         WorkDone(None, t1, 5, e, 1),
-                        WorkDone(None, t4, 2, e, 1),
                         WorkDone(None, t2, 2, e, 2),
                         WorkDone(None, t3, 4, e, 2),
+                        WorkDone(None, t4, 2, e, 1),
                     ]
                 ),
                 Plan(
                     [
+                        WorkDone(None, t1, 5, e, 2),
                         WorkDone(None, t2, 2, e, 1),
                         WorkDone(None, t3, 4, e, 1),
                         WorkDone(None, t4, 2, e, 1),
-                        WorkDone(None, t1, 5, e, 2),
                     ]
                 ),
             ),
@@ -292,7 +286,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e], pool)
         planner.build_plans(cycles=2)
-        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+        plans = planner.filter_plans(sort_by=None)
 
         by_cycles = planner.by_cycles(plans)
         self.assertEqual(
@@ -335,7 +329,7 @@ class TestPlanner(unittest.TestCase):
 
         planner = Planner([e1, e2], pool)
         planner.build_plans()
-        plans = planner.filter_plans(ignore_task_order=True, sort_by=None)
+        plans = planner.filter_plans(sort_by=None)
 
         by_assignees = planner.by_assignees(plans)
 

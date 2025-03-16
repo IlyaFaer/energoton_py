@@ -1,0 +1,4 @@
+1. **energoton** repository located by address [HERE] is the original repository and source code container for the Energoton Python package.
+2. The source code and all the author rights for it belong to @IlyaFaer, the creator of the Energoton formal model and developer of the Python package.
+3. Any user or organization is allowed to exploit the Energoton Python package and develop programs, exploiting it, in any way they like, as long as it's not used to provide automated task management services to other companies or users.  
+For example, using the package to automate a microservice, which manages work of 50 scraping robots inside your company, is allowed; using the package to develop an intelligence of a game NPC in a video game, is allowed (even if you sell it); developing an alternative to Jira or Trello, based on the package, is restricted; developing a paid subscription robot, which plans Agile sprints is restricted.

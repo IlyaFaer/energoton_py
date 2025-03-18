@@ -6,9 +6,9 @@
    1.3 "Package" shall mean the Python program contained in the Original Repository.  
    1.4 "Author" shall mean Ilya Gurov, the package developer, who can be contacted by gurovilya9@gmail.com.  
 2. **Appropriate use**  
-   2.1 Any user/organization is allowed to develop their own programs based on the Package.  
+   2.1 Any user/organization is allowed to develop programs based on the Package.  
    2.2 Any user/organization is allowed to exploit programs they developed basing on the Package, including for business purposes, except the cases mentioned in the Item 3 of the License.  
-   2.3 Any user/organization is allowed to present programs they developed basing on the Package (with respect of the Item 3 of the License), at conferences, meetings, and in blog posts, as long as they mention that the program is based on the Package and do not provide the source code of those programs.  
+   2.3 Any user/organization is allowed to present programs they developed basing on the Package (with respect of the Item 3 of the License), at conferences, meetings and in blog posts, as long as they mention that the programs are based on the Package and do not provide the source code of those programs.  
 3. **Restrictions**  
    3.1 It's restricted to use the Package to develop task management systems similar to Jira, Basecamp, etc., robots and chat robots for automated task planning, or any other products that provide automated task management services **outside of your organization**. If the program is exploited only inside your organization, it's fine.  
    3.2 It's restricted to develop alternatives of the Package on other programming languages, or APIs for it, or integrations with other programs, without Author's permission (it's motivated by possibility of some work already being done in this direction by the Author).  

@@ -1,4 +1,4 @@
-**energoton_py** is a Python package that automates task planning. Init workers with energy capacity, create tasks with energy cost, and the package will build a work plan, considering priorities and relations between tasks.
+**energoton_py** is a Python package that automates task planning. Init workers with energy capacity, create tasks with energy cost, and the package will build possible work plans, considering priorities and relations between tasks.
 
 ## About
 **What's energoton?**  
@@ -13,7 +13,7 @@ Energoton is a formal model similar to automatons. Imagine an abstract machine w
 
 So, shortly, energotons are abstract enough for a wide range of tasks - if there is planning, energotons will give you a shoulder.
 
-**Is it an AI?**  
+**Curious, is it an AI?**  
 No. You don't need to train it, only load tasks and workers data. You're free to connect any AI to it as a secondary system though.
 
 # Use Basics
@@ -22,7 +22,7 @@ Task is an atomic piece of work to do. Its only required attribute is `cost` - a
 
 ```python
 t = Task(
-    cost=4,  # e.g. the task takes 4 hours
+    cost=4,  # e.g. the task takes 4 hours to solve
     custom_fields={"date_due": "2025-03-15"},
     name="Task name",
 )
@@ -46,16 +46,16 @@ e2 = NonDeterministicEnergoton(
 ```
 The package supports two types of energotons, designed for different cases:  
   
-* Deterministic energoton will work on a task only if it has enough energy to solve it, without any partial conditions.
-* NonDeterministic energoton can solve a given task partially, putting its energy into the task as a contribution.
+* _DeterministicEnergoton_ will work on a task only if it has enough energy to solve it, without any partial conditions.
+* _NonDeterministicEnergoton_ can solve a given task partially, putting its energy into the task as a contribution.
   
 **Pool**  
 A pool represents a group of tasks. It can be a sprint, a project, or just a complex task, which consists of several subtasks. Pools can be embedded into each other for a more complex hierarchy.
 
 ```python
-t1 = Task(4)
-t2 = Task(6)
-t3 = Task(3)
+t1 = Task(cost=4)
+t2 = Task(cost=6)
+t3 = Task(cost=3)
 
 pool = Pool(
     children=[t1, t2],
@@ -99,8 +99,7 @@ plans = planner.filter_plans(
     # order the plans by descendance of the amount
     # of tasks solved in the plan
     sort_by="value",
-    # return only plans with the maximum possible
-    # length
+    # return only plans with the most tasks solved
     only_best=True,
 )
 ```
@@ -122,7 +121,7 @@ plans = planner.build_plans(cycles=5)
 ```
 
 **WorkDone**  
-A plan built by a planner consists of objects `WorkDone`, each of which represents a piece of planned work and includes the following fields:
+A plan built by a planner consists of `WorkDone` objects, each of which represents a piece of planned work with the following fields:
 * *task* - target task
 * *energy_spent* - amount of energy that's going to be spent
 * *assignee* - energoton that's going to spend this energy
@@ -136,3 +135,7 @@ This package is in **alpha** development stage. It may contain errors, performan
 
 ## Development Plan
 As the package is quite raw, some time will be spent to sharpen it, fix mistakes, improve performance and documentation. Star the repository and stay tuned, as there is more to come.
+
+## What's Next
+* Read the [Energoton theory](https://docs.google.com/document/d/1qSr1LRrfzFkJYoJUsLwi7DLwz6v3poVYMY_cnEyMLn8/edit?usp=sharing)
+* Study [the License](https://github.com/IlyaFaer/energoton_py/blob/main/LICENSE.md) to understand the appropriate use cases

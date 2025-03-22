@@ -11,7 +11,7 @@ Energoton is a formal model similar to automatons. Imagine an abstract machine w
 
 <u>Example 3</u>: You have a microservice, which solves queued tasks (scraping, aggregation, etc.). As tasks are monotonous, you know their cost, so, with energoton, you can make the service work smarter by ordering tasks, instead of going through them blindly.
 
-So, shortly, energotons are abstract enough for a wide range of tasks - if there is planning, energotons will give you a shoulder.
+So, shortly, energotons are abstract enough for a wide range of tasks - if there is planning, they'll will give you a shoulder.
 
 **Curious, is it an AI?**  
 No. You don't need to train it, only load tasks and workers data. You're free to connect any AI to it as a secondary system though.
@@ -131,11 +131,13 @@ A plan built by a planner consists of `WorkDone` objects, each of which represen
 The package includes more interesting functionality e.g. **Relations**, which allow to run planning in more complex cases. To see how they work (with detailed comments), check out the [samples](https://github.com/IlyaFaer/energoton/tree/main/samples).
 
 ## Early Version Warning
-This package is in **alpha** development stage. It may contain errors, performance issues, inconveniences and can introduce breaking changes. Use it cautiously and report any findings and ideas.
+This package is in early **beta** development stage. It may contain errors, performance issues, inconveniences and can introduce breaking changes. Use it cautiously and report any findings and ideas.
 
 ## Development Plan
-As the package is quite raw, some time will be spent to sharpen it, fix mistakes, improve performance and documentation. Star the repository and stay tuned, as there is more to come.
+As the package is quite raw, some time will be spent to sharpen it, fix mistakes, improve performance and documentation. Star the repository and stay tuned, as there is more to come.  
+  
+Next, there is a plan to implement a REST API on a fast programming language (it'll be Go, most likely) with a database and put build a Docker image, to make it possible for users to easily unroll a language-independent microservice based on energotons.  
 
 ## What's Next
-* Read the [Energoton theory](https://docs.google.com/document/d/1qSr1LRrfzFkJYoJUsLwi7DLwz6v3poVYMY_cnEyMLn8/edit?usp=sharing)
-* Study [the License](https://github.com/IlyaFaer/energoton_py/blob/main/LICENSE.md) to understand the appropriate use cases
+* Read the Energoton formal model [specification](https://docs.google.com/document/d/1qSr1LRrfzFkJYoJUsLwi7DLwz6v3poVYMY_cnEyMLn8/edit?usp=sharing) for comprehensive understanding
+* Study [the License](https://github.com/IlyaFaer/energoton_py/blob/main/LICENSE.md) to check the appropriate use cases

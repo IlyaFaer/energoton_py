@@ -46,12 +46,11 @@ for plan in plans:
 
 print(
     """
-In this simple case, we're returning all the possible plans,
-including plans, which have the same tasks, but in different
-order. They are not ordered or sorted in any way - just all
+In this simple case, we're returning all the possible plans.
+They are not ordered or sorted in any way - just all
 the mathematically possible variants.
 
-You can also see practical different between deterministic and
+You can see practical difference between deterministic and
 non-deterministic energotons. While deterministic energoton
 proposes you a plan with only two tasks solved:
 [
@@ -72,7 +71,7 @@ proposes you a plan with only two tasks solved:
 ]
 
 Non-deterministic energoton can add a bit more work to the
-same plan, and put some efforts into the third task:
+same plan, and put efforts into the third task:
 [
     WorkDone(
         task=Task(
@@ -93,12 +92,7 @@ same plan, and put some efforts into the third task:
             id_='3',
             cost=5,
         ),
-        amount=1,
+        amount=1,  # the task is solved partially
     )
-]
-
-While it may look like non-deterministic energoton is better,
-it all depends on the context, as some tasks just can't be
-solved partially.
-"""
+]"""
 )

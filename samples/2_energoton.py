@@ -1,9 +1,14 @@
-"""This sample shows how to init energotons."""
+"""This sample shows how to init energotons.
+
+Usually, you do not manipulate energotons
+directly. You only need to init them and
+pass them into a planner.
+"""
 
 from energoton import DeterministicEnergoton, NonDeterministicEnergoton
 from work import Task
 
-t1 = Task(cost=12)
+t = Task(cost=12)
 
 # Deterministic energoton is a transaction type
 # of worker. It solves a tasks, only if it has
@@ -18,7 +23,7 @@ print(de.energy_left)
 
 # Can't solve a task with cost higher than
 # energy left.
-assert not de.can_solve(t1)
+print("Deterministic can solve: ", de.can_solve(t))
 
 # Non-deterministic energoton can solve a task
 # partially, putting the energy left into
@@ -28,13 +33,13 @@ nde = NonDeterministicEnergoton(
     name="Non-Deterministic Energoton 1",
 )
 
-assert nde.can_solve(t1)
+print("Non-deterministic can solve: ", nde.can_solve(t))
 
 # Energoton can be charged in several ways.
 #
 # If you put an `int` as a capacity, then
 # the energoton will be charged with this
-# amount of energy on every recharge eternally.
+# amount of energy on every recharge.
 de = DeterministicEnergoton(capacity=8)
 
 # If you put a list of `int` as a capacity,
@@ -42,13 +47,13 @@ de = DeterministicEnergoton(capacity=8)
 # amounts of energy one by one.
 de = DeterministicEnergoton(capacity=[8, 4, 2])
 
-assert de.energy_left == 8
+print("1st cycle charge: ", de.energy_left)
 
 de.recharge()
-assert de.energy_left == 4
+print("2nd cycle charge: ", de.energy_left)
 
 de.recharge()
-assert de.energy_left == 2
+print("3rd cycle charge: ", de.energy_left)
 
 # If a charge is 0, then the energoton will
 # skip working during the related cycle.

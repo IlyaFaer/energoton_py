@@ -1,6 +1,6 @@
 """
-This sample shows how to set priorities for tasks
-as well as easily create custom priorities.
+This sample shows how to set priorities for
+tasks, including custom priorities.
 """
 
 from work import ExponentialPriority, NoPriority, Task, custom_priority
@@ -16,11 +16,11 @@ t1 = Task(
 # Exponential priority provides you with
 # the following priority levels:
 # - lowest
-# - low (1 low task = 2 * lowest tasks)
-# - normal (1 normal task = 2 * low tasks = 4 * lowest tasks)
-# - high (1 high task = 2 * normal tasks = 4 * low tasks = 8 * lowest tasks)
-# - highest (1 highest task = 2 * high tasks = 4 * normal tasks =
-# 8 * low tasks = 16 * lowest tasks)
+# - low (1 low task = 2 lowest tasks)
+# - normal (1 normal task = 2 low tasks = 4 lowest tasks)
+# - high (1 high task = 2 normal tasks = 4 low tasks = 8 lowest tasks)
+# - highest (1 highest task = 2 high tasks = 4 normal tasks =
+# 8 low tasks = 16 lowest tasks)
 #
 # Such priority values make energotons sensitive enough
 # to really respect the priorities.

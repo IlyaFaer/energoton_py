@@ -1,10 +1,12 @@
+import abc
+
 from base.mixins import IdMixin
 
 from .priority import NoPriority
 from .relation import Alternative, Blocking
 
 
-class WorkUnit(IdMixin):
+class WorkUnit(IdMixin, metaclass=abc.ABCMeta):
     def __init__(
         self,
         custom_fields={},
@@ -21,6 +23,12 @@ class WorkUnit(IdMixin):
         self.priority = priority
         self.parent = parent
 
+    @abc.abstractmethod
+    def is_solved(self):
+        raise NotImplementedError(
+            "is_solved method must be implemented for any work unit!"
+        )
+
     def __delitem__(self, key):
         del self.custom_fields[key]
 
@@ -33,13 +41,21 @@ class WorkUnit(IdMixin):
     @property
     def blocked_by(self):
         for rel in self.relations.values():
-            if isinstance(rel, Blocking) and rel.blocked == self:
+            if (
+                isinstance(rel, Blocking)
+                and rel.blocked == self
+                and not rel.blocker.is_solved
+            ):
                 yield rel
 
     @property
     def blocking(self):
         for rel in self.relations.values():
-            if isinstance(rel, Blocking) and rel.blocker == self:
+            if (
+                isinstance(rel, Blocking)
+                and rel.blocker == self
+                and not self.is_solved
+            ):
                 yield rel
 
     @property

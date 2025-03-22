@@ -135,6 +135,8 @@ This package is in early **beta** development stage. It may contain errors, perf
 
 ## Development Plan
 As the package is quite raw, some time will be spent to sharpen it, fix mistakes, improve performance and documentation. Star the repository and stay tuned, as there is more to come.  
+
+When the package is stable, a PyPl release is going to be made.  
   
 Next, there is a plan to implement a REST API on a fast programming language (it'll be Go, most likely) with a database and put build a Docker image, to make it possible for users to easily unroll a language-independent microservice based on energotons.  
 

@@ -125,6 +125,11 @@ A plan built by a planner consists of `WorkDone` objects, each of which represen
 **Advanced Features**  
 The package includes more interesting functionality e.g. **Relations**, which allow to run planning in more complex cases. To see how they work (with detailed comments), check out the [samples](https://github.com/IlyaFaer/energoton/tree/main/samples).
 
+## Performance and Priorities
+If all your tasks have the same priority, you frankly speaking don't need energotons - just sort them by their cost increasing, and that'll be your plan. You'll solve a lot of tasks at the beginning and less at the end, it's fair for equally meaningful tasks.  
+  
+The package includes 5-leveled exponential priorities. Use all 5, it'll significantly speed up finding the optimal plan. There is a mathematical reason for that: the more dispersed are priorities, the more the plans will differ - energotons will filter out ineficient ones early, reducing the amount of variants to consider. To understand performance influence, consider [this sample](https://github.com/IlyaFaer/energoton_py/blob/main/samples/5_plans_for_a_week_for_a_team.py): on the testing machine, finding the best plan takes 0.08 sec. But if we set the same priority for those 10 tasks, it'll take around 11 seconds to find the optimal plans.
+
 ## Early Version Warning
 This package is in early **beta** development stage. It may contain errors, performance issues, inconveniences and can introduce breaking changes. Use it cautiously and report any findings and ideas.
 

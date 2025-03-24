@@ -1,17 +1,17 @@
-**energoton_py** is a Python package that automates task planning. Init workers with energy capacity, create tasks with energy cost, and the package will build possible work plans, considering priorities and relations between tasks.
+**energoton_py** is a Python package that automates task planning. Init workers with energy capacity, create tasks with energy cost, and the package will find the optimal plan, considering priorities and relations between tasks.
 
 ## About
 **What's energoton?**  
-Energoton is a formal model similar to automatons. Imagine an abstract machine with a limited amount of energy and ability to solve abstract tasks, by spending that energy. This is energoton. It's goal is to walk through the given pool of tasks and find optimal resolution plans.
+Energoton is a formal model similar to automatons. Imagine an abstract machine with a limited amount of energy and ability to solve abstract tasks, by spending that energy. This is energoton. It's goal is to walk through the given pool of tasks, find all the possible plans and choose the best ones.
 
 **Okay, how can I use it?**  
 <u>Example 1</u>: You have a team of 5 developers, on average 15 standing tasks and you need to plan scrum sprints every week, considering priorities. Energotons can plan those sprints automatically.
 
 <u>Example 2</u>: You're developing a game NPC, which is supposed to be able to plan their actions, considering alternatives. Create a bunch of tasks, linked to each other through "Alternative" relations, and energoton will find the best of variants.
 
-<u>Example 3</u>: You have a microservice, which solves queued tasks (scraping, aggregation, etc.). As tasks are monotonous, you know their cost, so, with energoton, you can make the service work smarter by ordering tasks, instead of going through them blindly.
+<u>Example 3</u>: You have a microservice, which solves queued tasks (scraping, aggregation, etc.). As tasks are monotonous, you know their cost, so you can make the service work smarter by ordering tasks, instead of going through them blindly.
 
-So, shortly, energotons are abstract enough for a wide range of tasks - if there is planning, they'll will give you a shoulder.
+Shortly, energotons are abstract enough for a wide range of tasks - if there is planning, they'll will give you a shoulder.
 
 **Curious, is it an AI?**  
 No. You don't need to train it, only load tasks and workers data. You're free to connect any AI to it as a secondary system though.
@@ -36,7 +36,7 @@ Energoton is a worker that can solve tasks by spending energy. Easy to guess, it
 
 ```python
 e1 = DeterministicEnergoton(
-    capacity=8,  # e.g. 8 hours long work day
+    capacity=8,  # e.g. 8 hours work day
     name="Energoton 1",
 )
 e2 = NonDeterministicEnergoton(
@@ -91,17 +91,12 @@ planner = Planner(
     )
 )
 
-# build all possible plans
-planner.build_plans()
-
-# filter through plans to find the best ones
-plans = planner.filter_plans(
-    # order the plans by descendance of the amount
-    # of tasks solved in the plan
-    sort_by="value",
-    # return only plans with the most tasks solved
-    only_best=True,
-)
+# while planner is searching for the best
+# plan, it can return several, for example,
+# several plans with equally high number
+# of tasks solved (but no plans with
+# lower number of tasks)
+plans = planner.build_plans()
 ```
 **Cycles**  
 Work cycle represents an abstract time unit, during which energotons are working. It may be a work day, a sprint, an entire month - you're free to choose the scale. After a cycle is ended, the planner will recharge energotons, so they could continue working. You can control charges.

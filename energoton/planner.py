@@ -49,32 +49,7 @@ class Planner(list):
 
                 e.recharge()
 
-        return self._plans
-
-    def filter_plans(self, sort_by="value", only_best=False):
-        plans = self._plans
-
-        if sort_by in ("value", "energy_spent"):
-            plans.sort(key=lambda p: getattr(p, sort_by), reverse=True)
-
-            if only_best:
-                plans = self._only_best(plans, sort_by)
-
-        elif sort_by is not None:
-            raise ValueError(
-                f"'sort_by' argument must be one of: ['value', 'energy_spent', None]"
-            )
-
-        return tuple(plans)
-
-    def _only_best(self, plans, attr):
-        i = 1
-        while getattr(plans[i], attr) == getattr(
-            plans[0], attr
-        ) and i + 1 < len(plans):
-            i += 1
-
-        return plans[:i]
+        return tuple(self._plans)
 
     def pool_after_plan(self, plan):
         pool = copy.deepcopy(self._pool)

@@ -30,6 +30,20 @@ class Energoton(IdMixin):
     def recharge(self):
         self.energy_left = self.next_charge
 
+    def _commit_plan(self, plan, plans):
+        sorted_plan = Plan(sorted(plan, key=lambda w: w.task.id))
+        if plans:
+            if sorted_plan in plans:
+                return
+
+            if sorted_plan.value < plans[0].value:
+                return
+
+            if sorted_plan.value > plans[0].value:
+                plans.clear()
+
+        plans.append(sorted_plan)
+
     def _build_plans(self, task, plan, tasks, plans, cycle):
         if task is not None:
             work_done = self.work(task, cycle)
@@ -44,9 +58,7 @@ class Energoton(IdMixin):
                 can_continue = True
 
         if not can_continue:
-            sorted_plan = Plan(sorted(plan, key=lambda w: w.task.id))
-            if sorted_plan not in plans:
-                plans.append(sorted_plan)
+            self._commit_plan(plan, plans)
 
         if task is not None:
             if task.is_solved:

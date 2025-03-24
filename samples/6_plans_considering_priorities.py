@@ -20,21 +20,6 @@ e = DeterministicEnergoton(capacity=8)
 planner = Planner(energotons=[e], pool=pool)
 plans = planner.build_plans()
 
-plans = planner.filter_plans(sort_by="value")
-print(f"Built {len(plans)} plans:")
-for plan in plans:
-    print(plan.value, plan)
-
-print(
-    """
-As you might notice, the proposed plans have different value.
-Plans with low value are proposing to solve low-priority
-tasks, which doesn't make much sense as we care about
-priorities.
-
-The flag "only_best" can help us to filter out lower-value
-plans, shortening the list down to a single plan:"""
-)
-plans = planner.filter_plans(sort_by="value", only_best=True)
+print(f"The best plan, considering priorities:")
 for plan in plans:
     print(plan.value, plan)

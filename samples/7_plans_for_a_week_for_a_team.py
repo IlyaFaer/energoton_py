@@ -40,7 +40,6 @@ e3 = DeterministicEnergoton(capacity=[20], id_="part_timer")
 planner = Planner(energotons=[e1, e2, e3], pool=pool)
 plans = planner.build_plans(cycles=5)
 
-plans = planner.filter_plans(sort_by="value", only_best=True)
 print(f"Built {len(plans)} plans")
 
 for i in plans[:5]:

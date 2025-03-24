@@ -44,33 +44,9 @@ class TestEnergoton(unittest.TestCase):
             [
                 Plan(
                     [
-                        WorkDone(None, t1, 5, e),
-                        WorkDone(None, t2, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t1, 5, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
                         WorkDone(None, t2, 2, e),
                         WorkDone(None, t3, 4, e),
                         WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t5, 6, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t4, 2, e),
-                        WorkDone(None, t5, 6, e),
                     ]
                 ),
             ],
@@ -101,20 +77,8 @@ class TestEnergoton(unittest.TestCase):
                 ),
                 Plan(
                     [
-                        WorkDone(None, t1, 5, e),
-                        WorkDone(None, t3, 3, e),
-                    ]
-                ),
-                Plan(
-                    [
                         WorkDone(None, t1, 2, e),
                         WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t1, 4, e),
                         WorkDone(None, t3, 4, e),
                     ]
                 ),
@@ -173,7 +137,6 @@ class TestEnergoton(unittest.TestCase):
         self.assertEqual(
             plans,
             [
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
                 Plan(
                     [
                         WorkDone(None, t2, 2, e),
@@ -181,8 +144,6 @@ class TestEnergoton(unittest.TestCase):
                         WorkDone(None, t4, 2, e),
                     ]
                 ),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
             ],
         )
 

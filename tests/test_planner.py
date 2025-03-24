@@ -8,43 +8,6 @@ from work.priority import ExponentialPriority
 
 
 class TestPlanner(unittest.TestCase):
-    def test_ignore_task_order(self):
-        pool = Pool()
-        t1 = Task(5, id_="1")
-        t2 = Task(2, id_="2")
-        t3 = Task(4, id_="3")
-        t4 = Task(2, id_="4")
-        t5 = Task(6, id_="5")
-
-        pool.add(t1)
-        pool.add(t2)
-        pool.add(t3)
-        pool.add(t4)
-        pool.add(t5)
-
-        e = DeterministicEnergoton(8)
-
-        planner = Planner([e], pool)
-        planner.build_plans()
-        plans = planner.filter_plans(sort_by=None)
-
-        self.assertEqual(
-            plans,
-            (
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-            ),
-        )
-
     def test_sort_by_value(self):
         pool = Pool()
         t1 = Task(
@@ -82,83 +45,11 @@ class TestPlanner(unittest.TestCase):
         e = DeterministicEnergoton(8, name="energoton")
 
         planner = Planner([e], pool)
-        planner.build_plans()
-        plans = planner.filter_plans(sort_by="value")
+        plans = planner.build_plans()
 
-        self.assertEqual(
-            plans,
-            (
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-            ),
-        )
-
-        plans = planner.filter_plans(sort_by="value", only_best=True)
         self.assertEqual(
             plans,
             (Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),),
-        )
-
-    def test_sort_by_energy_spent(self):
-        pool = Pool()
-        t1 = Task(5, id_="1")
-        t2 = Task(2, id_="2")
-        t3 = Task(4, id_="3")
-        t4 = Task(2, id_="4")
-        t5 = Task(6, id_="5")
-
-        pool.add(t1)
-        pool.add(t2)
-        pool.add(t3)
-        pool.add(t4)
-        pool.add(t5)
-
-        e = DeterministicEnergoton(8)
-
-        planner = Planner([e], pool)
-        planner.build_plans()
-        plans = planner.filter_plans(sort_by="energy_spent")
-
-        self.assertEqual(
-            plans,
-            (
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
-            ),
-        )
-
-        plans = planner.filter_plans(sort_by="energy_spent", only_best=True)
-        self.assertEqual(
-            plans,
-            (
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-            ),
         )
 
     def test_pool_after_plan(self):
@@ -176,8 +67,7 @@ class TestPlanner(unittest.TestCase):
         e = NonDeterministicEnergoton(8)
 
         planner = Planner([e], root_pool)
-        planner.build_plans()
-        plans = planner.filter_plans(only_best=True)
+        plans = planner.build_plans()
 
         result_pool = planner.pool_after_plan(plans[0])
         self.assertTrue(result_pool.children[t3.id].is_solved)
@@ -206,8 +96,7 @@ class TestPlanner(unittest.TestCase):
             ],
             root_pool,
         )
-        planner.build_plans()
-        plans = planner.filter_plans(only_best=True)
+        plans = planner.build_plans()
 
         for plan, result in zip(
             plans,
@@ -238,28 +127,11 @@ class TestPlanner(unittest.TestCase):
         e = DeterministicEnergoton(8)
 
         planner = Planner([e], pool)
-        planner.build_plans(cycles=2)
-        plans = planner.filter_plans(sort_by=None)
+        plans = planner.build_plans(cycles=2)
 
         self.assertEqual(
             plans,
             (
-                Plan(
-                    [
-                        WorkDone(None, t1, 5, e, 1),
-                        WorkDone(None, t2, 2, e, 1),
-                        WorkDone(None, t3, 4, e, 2),
-                        WorkDone(None, t4, 2, e, 2),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t1, 5, e, 1),
-                        WorkDone(None, t2, 2, e, 2),
-                        WorkDone(None, t3, 4, e, 2),
-                        WorkDone(None, t4, 2, e, 1),
-                    ]
-                ),
                 Plan(
                     [
                         WorkDone(None, t1, 5, e, 2),
@@ -285,8 +157,7 @@ class TestPlanner(unittest.TestCase):
         e = DeterministicEnergoton(8)
 
         planner = Planner([e], pool)
-        planner.build_plans(cycles=2)
-        plans = planner.filter_plans(sort_by=None)
+        plans = planner.build_plans(cycles=2)
 
         by_cycles = planner.by_cycles(plans)
         self.assertEqual(
@@ -316,9 +187,9 @@ class TestPlanner(unittest.TestCase):
     def test_by_assignees(self):
         pool = Pool()
 
-        t1 = Task(2, id_="2")
-        t2 = Task(4, id_="3")
-        t3 = Task(2, id_="4")
+        t1 = Task(2, id_="1")
+        t2 = Task(4, id_="2")
+        t3 = Task(2, id_="3")
 
         pool.add(t1)
         pool.add(t2)
@@ -328,8 +199,7 @@ class TestPlanner(unittest.TestCase):
         e2 = DeterministicEnergoton(4, id_="2")
 
         planner = Planner([e1, e2], pool)
-        planner.build_plans()
-        plans = planner.filter_plans(sort_by=None)
+        plans = planner.build_plans()
 
         by_assignees = planner.by_assignees(plans)
 
@@ -342,13 +212,6 @@ class TestPlanner(unittest.TestCase):
                         WorkDone(None, t3, 2, e1),
                     ],
                     "2": [WorkDone(None, t2, 4, e2)],
-                },
-                {
-                    "2": [
-                        WorkDone(None, t1, 2, e2),
-                        WorkDone(None, t3, 2, e2),
-                    ],
-                    "1": [WorkDone(None, t2, 4, e1)],
                 },
             ],
         )

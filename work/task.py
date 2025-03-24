@@ -1,34 +1,7 @@
-from base.mixins import IdMixin
+from base import Id
 
 from .priority import NoPriority
-from .work_unit import WorkUnit
-
-
-class WorkDone(IdMixin):
-    def __init__(self, id_, task, energy_spent, assignee, cycle=1):
-        self.task = task
-        self.amount = energy_spent
-        self.assignee = assignee
-        self.cycle = cycle
-
-        super().__init__(id_)
-
-    def __repr__(self):
-        return f"WorkDone(task={self.task}, amount={self.amount}, cycle={self.cycle}, assignee='{self.assignee.id}')"
-
-    def __eq__(self, other):
-        return (
-            self.task.id == other.task.id
-            and self.amount == other.amount
-            and self.assignee == other.assignee
-            and self.cycle == other.cycle
-        )
-
-    def drop(self):
-        self.task.drop_work_done(self)
-
-    def __hash__(self):
-        return hash(self.id)
+from .work_unit import WorkDone, WorkUnit
 
 
 class Task(WorkUnit):

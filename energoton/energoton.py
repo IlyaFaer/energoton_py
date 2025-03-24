@@ -1,10 +1,10 @@
 import copy
 
-from base.mixins import IdMixin
+from base import Id
 from .planner import Plan
 
 
-class Energoton(IdMixin):
+class Energoton(Id):
     def __init__(self, capacity, id_=None, name=None):
         self.name = name
         self._capacity = capacity

@@ -1,7 +1,7 @@
-from base.mixins import IdMixin
+from base import Id
 
 
-class Alternative(IdMixin):
+class Alternative(Id):
     def __init__(self, *alternatives, id_=None):
         super().__init__(id_)
 
@@ -20,7 +20,7 @@ class Alternative(IdMixin):
         return any(unit.is_solved for unit in self.alternatives)
 
 
-class Blocking(IdMixin):
+class Blocking(Id):
     def __init__(self, blocker, blocked, id_=None):
         super().__init__(id_)
 

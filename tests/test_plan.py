@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from work import Pool, Task, ExponentialPriority, WorkDone
+from work import Task, Priority, WorkDone
 from energoton.planner import Plan
 
 
@@ -14,11 +14,11 @@ class TestPlan(unittest.TestCase):
 
     def test_value(self):
         tasks = (
-            Task(5, priority=ExponentialPriority("lowest")),
-            Task(5, priority=ExponentialPriority("low")),
-            Task(5, priority=ExponentialPriority("normal")),
-            Task(5, priority=ExponentialPriority("high")),
-            Task(5, priority=ExponentialPriority("highest")),
+            Task(5, priority=Priority("lowest")),
+            Task(5, priority=Priority("low")),
+            Task(5, priority=Priority("normal")),
+            Task(5, priority=Priority("high")),
+            Task(5, priority=Priority("highest")),
         )
 
         work_done = [WorkDone(None, t, 5, mock.Mock()) for t in tasks]

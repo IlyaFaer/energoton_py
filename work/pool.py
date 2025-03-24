@@ -1,5 +1,4 @@
-from .priority import NoPriority
-from .work_unit import WorkUnit
+from .work_unit import Priority, WorkUnit
 
 
 class Pool(WorkUnit):
@@ -7,7 +6,7 @@ class Pool(WorkUnit):
         self,
         custom_fields={},
         parent=None,
-        priority=NoPriority(),
+        priority=Priority("normal"),
         children=[],
         id_=None,
         name=None,

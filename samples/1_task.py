@@ -6,7 +6,7 @@ Task is an atomic piece of work to be done.
 
 import datetime
 
-from work import ExponentialPriority, Pool, Task
+from work import Priority, Pool, Task
 
 # Init a task.
 t = Task(
@@ -69,7 +69,13 @@ t = Task(
     # Id is optional. If not provided, it'll
     # be generated as a UUID.
     id_="task-1",
-    # A task can be parented to a pool on init.
+    # Priorities are related as this:
+    # - lowest
+    # - low (1 low task = 2 lowest tasks)
+    # - normal (1 normal task = 2 low tasks = 4 lowest tasks)
+    # - high (1 high task = 2 normal tasks = 4 low tasks = 8 lowest tasks)
+    # - highest (1 highest task = 2 high tasks = 4 normal tasks =
+    # 8 low tasks = 16 lowest tasks)
     parent=pool,
-    priority=ExponentialPriority("high"),
+    priority=Priority("high"),
 )

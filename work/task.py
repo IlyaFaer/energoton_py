@@ -1,7 +1,4 @@
-from base import Id
-
-from .priority import NoPriority
-from .work_unit import WorkDone, WorkUnit
+from .work_unit import Priority, WorkDone, WorkUnit
 
 
 class Task(WorkUnit):
@@ -10,7 +7,7 @@ class Task(WorkUnit):
         cost,
         custom_fields={},
         parent=None,
-        priority=NoPriority(),
+        priority=Priority("normal"),
         id_=None,
         name=None,
     ):

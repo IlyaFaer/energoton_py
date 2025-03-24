@@ -9,8 +9,21 @@ import abc
 
 from base import Id
 
-from .priority import NoPriority
 from .relation import Alternative, Blocking
+
+
+class Priority:
+    exp_values = {
+        "lowest": 1,
+        "low": 2,
+        "normal": 4,
+        "high": 8,
+        "highest": 16,
+    }
+
+    def __init__(self, label):
+        self.label = label
+        self.value = self.exp_values[label]
 
 
 class WorkUnit(Id, metaclass=abc.ABCMeta):
@@ -23,12 +36,10 @@ class WorkUnit(Id, metaclass=abc.ABCMeta):
         parent (Optional[work.pool.Pool]):
             Parent pool.
         priority (Optional[Union[
-            work.priority.NoPriority,
-            work.priority.ExponentialPriority,
-            work.priority.CustomPriority,
+            Priority,
+            CustomPriority,
         ]]):
-            Priority of the work unit. Defaults to NoPriority, which
-            means all tasks are equal.
+            Priority of the work unit. Defaults to "medium" priority.
         id_ (Optional[str | uuid.UUID]):
             Id of the work unit. Generated, if not provided explicitly.
         name (Optional[str]):
@@ -39,7 +50,7 @@ class WorkUnit(Id, metaclass=abc.ABCMeta):
         self,
         custom_fields=None,
         parent=None,
-        priority=NoPriority(),
+        priority=Priority("normal"),
         id_=None,
         name=None,
     ):
@@ -211,9 +222,5 @@ class WorkDone(Id):
         """
         return (
             f"WorkDone(task={self.task}, amount={self.amount},"
-            " cycle={self.cycle}, assignee='{self.assignee.id}')"
+            f" cycle={self.cycle}, assignee='{self.assignee.id}')"
         )
-
-    def drop(self):
-        """Drop the work piece from the related task."""
-        self.task.drop_work_done(self)

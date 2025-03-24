@@ -3,8 +3,7 @@ from unittest import mock
 
 from energoton import DeterministicEnergoton, NonDeterministicEnergoton
 from energoton.planner import Planner, Plan
-from work import Pool, Task, WorkDone
-from work.priority import ExponentialPriority
+from work import Pool, Priority, Task, WorkDone
 
 
 class TestPlanner(unittest.TestCase):
@@ -13,27 +12,27 @@ class TestPlanner(unittest.TestCase):
         t1 = Task(
             5,
             id_=1,
-            priority=ExponentialPriority("high"),
+            priority=Priority("high"),
         )
         t2 = Task(
             2,
             id_=2,
-            priority=ExponentialPriority("low"),
+            priority=Priority("low"),
         )
         t3 = Task(
             4,
             id_=3,
-            priority=ExponentialPriority("normal"),
+            priority=Priority("normal"),
         )
         t4 = Task(
             2,
             id_=4,
-            priority=ExponentialPriority("highest"),
+            priority=Priority("highest"),
         )
         t5 = Task(
             6,
             id_=5,
-            priority=ExponentialPriority("lowest"),
+            priority=Priority("lowest"),
         )
 
         pool.add(t1)

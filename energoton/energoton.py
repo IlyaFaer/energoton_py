@@ -67,7 +67,7 @@ class Energoton(Id):
             plan.remove(work_done)
             self.energy_left += work_done.amount
 
-            work_done.drop()
+            task.drop_work_done(work_done)
 
     def build_plans(self, pool, cycle=1, plan=None):
         plans = []

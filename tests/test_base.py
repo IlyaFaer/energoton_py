@@ -3,7 +3,7 @@ import unittest
 from base.base import Id
 
 
-class TestIdMixin(unittest.TestCase):
+class TestId(unittest.TestCase):
     def test_id_immutable(self):
         id_ = 1
 

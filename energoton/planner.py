@@ -12,9 +12,12 @@ class Plan(list):
                 count += 1
         return count
 
+    def __eq__(self, other):
+        return self.dry == other.dry
+
     @property
-    def length(self):
-        return len(self)
+    def dry(self):
+        return tuple([w.dry for w in self])
 
     @property
     def energy_spent(self):
@@ -40,11 +43,12 @@ class Planner(list):
                 else:
                     new_plans = []
                     for plan in self._plans:
-                        new_plans.extend(
-                            e.build_plans(
-                                self.pool_after_plan(plan), c + 1, plan
-                            )
-                        )
+                        for new_plan in e.build_plans(
+                            self.pool_after_plan(plan), c + 1, plan
+                        ):
+                            if new_plan not in new_plans:
+                                new_plans.append(new_plan)
+
                     self._plans = new_plans
 
                 e.recharge()

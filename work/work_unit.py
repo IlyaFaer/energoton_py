@@ -224,3 +224,7 @@ class WorkDone(Id):
             f"WorkDone(task={self.task}, amount={self.amount},"
             f" cycle={self.cycle}, assignee='{self.assignee.id}')"
         )
+
+    @property
+    def dry(self):
+        return (self.task.id, self.amount)

@@ -171,15 +171,6 @@ class TestPlanner(unittest.TestCase):
                         WorkDone(None, t3, 4, e, 2),
                     ],
                 },
-                {
-                    1: [
-                        WorkDone(None, t2, 2, e, 1),
-                        WorkDone(None, t3, 4, e, 1),
-                    ],
-                    2: [
-                        WorkDone(None, t1, 5, e, 2),
-                    ],
-                },
             ],
         )
 

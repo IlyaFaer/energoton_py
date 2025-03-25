@@ -13,9 +13,6 @@ Energoton is a formal model similar to automatons. Imagine an abstract machine w
 
 Shortly, energotons are abstract enough for a wide range of tasks - if there is planning, they'll will give you a shoulder.
 
-**Curious, is it an AI?**  
-No. You don't need to train it, only load tasks and workers data. You're free to connect any AI to it as a secondary system though.
-
 ## Use Basics
 **Task**  
 Task is an atomic piece of work to do. Its only required attribute is `cost` - a simple `int`, which represents the amount of energy that must be spent to solve the task.

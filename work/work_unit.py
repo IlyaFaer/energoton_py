@@ -25,6 +25,9 @@ class Priority:
         self.label = label
         self.value = self.exp_values[label]
 
+    def __repr__(self):
+        return f"Priority('{self.label}')"
+
 
 class WorkUnit(Id, metaclass=abc.ABCMeta):
     """Represents a single work unit to do. Can be a task or a pool.

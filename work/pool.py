@@ -33,6 +33,10 @@ class Pool(WorkUnit):
         return f"Pool(id={self.id}, name={self.name})"
 
     @property
+    def dry(self):
+        return {t.id: t.dry for t in self.flat_tasks()}
+
+    @property
     def done(self):
         for t in filter(lambda c: c.is_solved, self.children.values()):
             yield t

@@ -20,6 +20,16 @@ class Task(WorkUnit):
         return f"Task(id_='{self.id}', name='{self.name}', cost={self.cost})"
 
     @property
+    def dry(self):
+        return {
+            "id": self.id,
+            "cost": self.cost,
+            "spent": self.spent,
+            "relations": self.relations,
+            "priority": self.priority,
+        }
+
+    @property
     def spent(self):
         return sum(w.amount for w in self._work_done)
 

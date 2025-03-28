@@ -1,6 +1,7 @@
 import copy
 
 from base import Id
+from work import WorkDone, Blocking, Alternative
 from .planner import Plan
 
 
@@ -9,6 +10,9 @@ class Energoton(Id):
         self.name = name
         self._capacity = capacity
         self.energy_left = self.next_charge
+
+        self._dict_pool = None
+        self._dry_dict_pool = None
 
         super().__init__(id_)
 
@@ -48,7 +52,7 @@ class Energoton(Id):
         if task is not None:
             work_done = self.work(task, cycle)
             plan.append(work_done)
-            if task.is_solved:
+            if task["cost"] == task["spent"]:
                 tasks.remove(task)
 
         can_continue = False
@@ -61,40 +65,73 @@ class Energoton(Id):
             self._commit_plan(plan, plans)
 
         if task is not None:
-            if task.is_solved:
+            if task["cost"] == task["spent"]:
                 tasks.append(task)
 
             plan.remove(work_done)
             self.energy_left += work_done.amount
 
-            task.drop_work_done(work_done)
+            task["spent"] -= work_done.amount
 
-    def build_plans(self, pool, cycle=1, plan=None):
+    def build_plans(self, pool, dict_pool, cycle=1, plan=None):
+        if self._dict_pool is None:
+            self._dict_pool = dict_pool
+
+        if self._dry_dict_pool is None:
+            self._dry_dict_pool = pool
+
         plans = []
         self._build_plans(
             task=None,
             plan=plan or Plan(),
-            tasks=pool.flat_tasks(),
+            tasks=list(pool.values()),
             plans=plans,
             cycle=cycle,
         )
         return plans
 
     def work(self, task, cycle=1):
-        energy_spent = min(self.energy_left, task.todo)
+        energy_spent = min(self.energy_left, task["cost"] - task["spent"])
         self.energy_left -= energy_spent
-        work_done = task.work_done(energy_spent, self, cycle)
 
+        task["spent"] += energy_spent
+        work_done = WorkDone(
+            "1",
+            self._dict_pool[task["id"]],
+            energy_spent,
+            self,
+            cycle,
+        )
         return work_done
+
+    def _check_relations(self, task):
+        blocked = False
+        actual = True
+
+        for rel in task["relations"].values():
+            if isinstance(rel, Blocking) and rel.blocked.id == task["id"]:
+                dry = self._dry_dict_pool[rel.blocker.id]
+                if dry["spent"] < dry["cost"]:
+                    blocked = True
+
+            if isinstance(rel, Alternative):
+                for alt in rel.alternatives:
+                    dry = self._dry_dict_pool[alt.id]
+                    if dry["spent"] == dry["cost"]:
+                        actual = False
+
+        return blocked, actual
 
 
 class DeterministicEnergoton(Energoton):
     def can_solve(self, task):
+        blocked, actual = self._check_relations(task)
+
         if (
             self.energy_left > 0
-            and self.energy_left >= task.todo
-            and not task.is_blocked
-            and task.is_actual
+            and self.energy_left >= task["cost"] - task["spent"]
+            and not blocked
+            and actual
         ):
             return True
         return False
@@ -102,6 +139,8 @@ class DeterministicEnergoton(Energoton):
 
 class NonDeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        if self.energy_left > 0 and not task.is_blocked and task.is_actual:
+        blocked, actual = self._check_relations(task)
+
+        if self.energy_left > 0 and not blocked and actual:
             return True
         return False

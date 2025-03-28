@@ -31,6 +31,9 @@ class Plan(list):
 class Planner(list):
     def __init__(self, energotons, pool):
         self._pool = pool
+        self._dry_pool = pool.dry
+        self._dict_pool = pool.as_dict
+
         self._energotons = energotons
 
         self._plans = []
@@ -39,12 +42,17 @@ class Planner(list):
         for c in range(cycles):
             for e in self._energotons:
                 if self._plans == []:
-                    self._plans = e.build_plans(self._pool, c + 1)
+                    self._plans = e.build_plans(
+                        self._dry_pool, cycle=c + 1, dict_pool=self._dict_pool
+                    )
                 else:
                     new_plans = []
                     for plan in self._plans:
                         for new_plan in e.build_plans(
-                            self.pool_after_plan(plan), c + 1, plan
+                            self.dry_pool_after_plan(plan),
+                            self._dict_pool,
+                            c + 1,
+                            plan,
                         ):
                             if new_plan not in new_plans:
                                 new_plans.append(new_plan)
@@ -61,6 +69,23 @@ class Planner(list):
 
         for work_done in plan:
             tasks[work_done.task.id]._work_done.append(work_done)
+
+        return pool
+
+    def dry_pool_after_plan(self, plan):
+        pool = copy.deepcopy(self._dry_pool)
+
+        to_del = []
+        for work_done in plan:
+            pool[work_done.task.id]["spent"] += work_done.amount
+            if (
+                pool[work_done.task.id]["spent"]
+                == pool[work_done.task.id]["cost"]
+            ):
+                to_del.append(work_done.task.id)
+
+        for t in to_del:
+            del pool[t]
 
         return pool
 

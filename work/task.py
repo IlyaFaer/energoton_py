@@ -11,7 +11,7 @@ class Task(WorkUnit):
         id_=None,
         name=None,
     ):
-        self._work_done = []
+        self.work_done = []
         self.cost = cost
 
         super().__init__(custom_fields, parent, priority, id_, name)
@@ -31,7 +31,7 @@ class Task(WorkUnit):
 
     @property
     def spent(self):
-        return sum(w.amount for w in self._work_done)
+        return sum(w.amount for w in self.work_done)
 
     @property
     def is_solved(self):
@@ -42,15 +42,4 @@ class Task(WorkUnit):
         return self.cost - self.spent
 
     def drop_work_done(self, energy_spent):
-        self._work_done.remove(energy_spent)
-
-    def work_done(self, energy_spent, energoton, cycle=1):
-        work_done = WorkDone(
-            str(self.id) + "-work_done-" + str(len(self._work_done) + 1),
-            self,
-            energy_spent,
-            energoton,
-            cycle,
-        )
-        self._work_done.append(work_done)
-        return work_done
+        self.work_done.remove(energy_spent)

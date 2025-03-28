@@ -68,7 +68,7 @@ class Planner(list):
         tasks = pool.as_dict
 
         for work_done in plan:
-            tasks[work_done.task.id]._work_done.append(work_done)
+            tasks[work_done.task.id].work_done.append(work_done)
 
         return pool
 

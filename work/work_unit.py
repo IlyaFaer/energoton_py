@@ -38,10 +38,7 @@ class WorkUnit(Id, metaclass=abc.ABCMeta):
             >>> work_unit['field_name']
         parent (Optional[work.pool.Pool]):
             Parent pool.
-        priority (Optional[Union[
-            Priority,
-            CustomPriority,
-        ]]):
+        priority (Optional[Priority]):
             Priority of the work unit. Defaults to "medium" priority.
         id_ (Optional[str | uuid.UUID]):
             Id of the work unit. Generated, if not provided explicitly.

@@ -40,6 +40,3 @@ class Task(WorkUnit):
     @property
     def todo(self):
         return self.cost - self.spent
-
-    def drop_work_done(self, energy_spent):
-        self.work_done.remove(energy_spent)

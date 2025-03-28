@@ -71,12 +71,6 @@ root_pool.pop(pool.id)
 Now, when we are shortly introduced to the main elements, we can start planning our work:
 ```python
 planner = Planner(
-    # e.g. a team of 3 employees
-    energotons=[
-        DeterministicEnergoton(8),
-        DeterministicEnergoton(8),
-        DeterministicEnergoton(8),
-    ],
     # tasks to be done
     pool=Pool(
         children=[
@@ -85,7 +79,7 @@ planner = Planner(
             Task(1),
             Task(4),
         ]
-    )
+    ),
 )
 
 # while planner is searching for the best
@@ -93,7 +87,13 @@ planner = Planner(
 # several plans with equally high number
 # of tasks solved (but no plans with
 # lower number of tasks)
-plans = planner.build_plans()
+plans = planner.build_plans(
+    # e.g. a team of 3 employees
+    energotons=[
+        DeterministicEnergoton(8),
+        DeterministicEnergoton(8),
+        DeterministicEnergoton(8),
+    ])
 ```
 **Cycles**  
 Work cycle represents an abstract time unit, during which energotons are working. It may be a work day, a sprint, an entire month - you're free to choose the scale. After a cycle is ended, the planner will recharge energotons, so they could continue working. You can control charges.
@@ -104,12 +104,9 @@ e = DeterministicEnergoton(
     capacity=[8, 0, 8, 8, 8]
 )
 
-planner = Planner(
-    energotons=[e],
-    pool=some_pool,
-)
+planner = Planner(pool=some_pool)
 
-plans = planner.build_plans(cycles=5)
+plans = planner.build_plans(energotons=[e], cycles=5)
 ```
 
 **WorkDone**  

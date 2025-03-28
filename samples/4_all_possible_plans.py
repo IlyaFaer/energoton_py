@@ -28,8 +28,8 @@ pool = Pool(children=[t1, t2, t3, t4])
 
 e = DeterministicEnergoton(capacity=8)
 
-planner = Planner(energotons=[e], pool=pool)
-plans = planner.build_plans()
+planner = Planner(pool=pool)
+plans = planner.build_plans(energotons=[e])
 print("---------DETERMINISTIC All plans:")
 for plan in plans:
     print(plan)
@@ -38,8 +38,8 @@ print()
 
 e = NonDeterministicEnergoton(capacity=8)
 
-planner = Planner(energotons=[e], pool=pool)
-plans = planner.build_plans()
+planner = Planner(pool=pool)
+plans = planner.build_plans(energotons=[e])
 print("---------NON-DETERMINISTIC All plans:")
 for plan in plans:
     print(plan)

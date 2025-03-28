@@ -25,8 +25,8 @@ pool = Pool(children=[t1, t2])
 
 e = DeterministicEnergoton(capacity=8)
 
-planner = Planner(energotons=[e], pool=pool)
-plans = planner.build_plans()
+planner = Planner(pool=pool)
+plans = planner.build_plans(energotons=[e])
 
 print(
     (
@@ -42,8 +42,8 @@ blocking_rel.drop()
 
 Alternative(t1, t2)
 
-planner = Planner(energotons=[e], pool=pool)
-plans = planner.build_plans()
+planner = Planner(pool=pool)
+plans = planner.build_plans(energotons=[e])
 
 print(
     (

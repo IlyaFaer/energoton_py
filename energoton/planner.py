@@ -28,19 +28,38 @@ class Plan(list):
         return sum(t.task.priority.value for t in self)
 
 
-class Planner(list):
-    def __init__(self, energotons, pool):
-        self._pool = pool
+class Planner:
+    """
+    Planner builds plans for the given pool
+    and provides methods to analyze them.
+
+    NOTE: On init, Planner will make a deep copy
+    of the given pool. It rigidly sticks the planner
+    to the pool, and allows you to re-use the pool
+    in multiple planners (e.g. you have 2 teams and
+    you want to compare how they'll handle the same
+    pool of tasks, running planners in parallel).
+
+    Args:
+        pool (work.pool.Pool):
+            The pool of tasks to be solved.
+    """
+
+    def __init__(self, pool):
+        if len(pool) == 0:
+            raise ValueError(
+                f"The given pool {pool.id} - {pool.name} is empty."
+            )
+
+        self._pool = copy.deepcopy(pool)
         self._dry_pool = pool.dry
         self._dict_pool = pool.as_dict
 
-        self._energotons = energotons
-
         self._plans = []
 
-    def build_plans(self, cycles=1):
+    def build_plans(self, energotons, cycles=1):
         for c in range(cycles):
-            for e in self._energotons:
+            for e in energotons:
                 if self._plans == []:
                     self._plans = e.build_plans(
                         self._dry_pool, cycle=c + 1, dict_pool=self._dict_pool

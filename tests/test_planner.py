@@ -43,8 +43,8 @@ class TestPlanner(unittest.TestCase):
 
         e = DeterministicEnergoton(8, name="energoton")
 
-        planner = Planner([e], pool)
-        plans = planner.build_plans()
+        planner = Planner(pool)
+        plans = planner.build_plans([e])
 
         self.assertEqual(
             plans,
@@ -65,8 +65,8 @@ class TestPlanner(unittest.TestCase):
 
         e = NonDeterministicEnergoton(8)
 
-        planner = Planner([e], root_pool)
-        plans = planner.build_plans()
+        planner = Planner(root_pool)
+        plans = planner.build_plans([e])
 
         result_pool = planner.pool_after_plan(plans[0])
         self.assertTrue(result_pool.children[t3.id].is_solved)
@@ -88,14 +88,13 @@ class TestPlanner(unittest.TestCase):
         root_pool.add(t3)
         root_pool.add(pool1)
 
-        planner = Planner(
+        planner = Planner(root_pool)
+        plans = planner.build_plans(
             [
                 DeterministicEnergoton(8, id_="1"),
                 DeterministicEnergoton(8, id_="2"),
-            ],
-            root_pool,
+            ]
         )
-        plans = planner.build_plans()
 
         for plan, result in zip(
             plans,
@@ -125,8 +124,8 @@ class TestPlanner(unittest.TestCase):
 
         e = DeterministicEnergoton(8)
 
-        planner = Planner([e], pool)
-        plans = planner.build_plans(cycles=2)
+        planner = Planner(pool)
+        plans = planner.build_plans([e], cycles=2)
 
         self.assertEqual(
             plans,
@@ -155,8 +154,8 @@ class TestPlanner(unittest.TestCase):
 
         e = DeterministicEnergoton(8)
 
-        planner = Planner([e], pool)
-        plans = planner.build_plans(cycles=2)
+        planner = Planner(pool)
+        plans = planner.build_plans([e], cycles=2)
 
         by_cycles = planner.by_cycles(plans)
         self.assertEqual(
@@ -188,8 +187,8 @@ class TestPlanner(unittest.TestCase):
         e1 = DeterministicEnergoton(4, id_="1")
         e2 = DeterministicEnergoton(4, id_="2")
 
-        planner = Planner([e1, e2], pool)
-        plans = planner.build_plans()
+        planner = Planner(pool)
+        plans = planner.build_plans([e1, e2])
 
         by_assignees = planner.by_assignees(plans)
 

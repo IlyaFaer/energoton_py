@@ -33,9 +33,9 @@ class Planner:
     Planner builds plans for the given pool
     and provides methods to analyze them.
 
-    NOTE: On init, Planner will make a deep copy
-    of the given pool. It rigidly sticks the planner
-    to the pool, and allows you to re-use the pool
+    NOTE: On init, Planner makes a deep copy
+    of the given pool. It sticks the planner
+    to the pool, and allows to re-use the pool
     in multiple planners (e.g. you have 2 teams and
     you want to compare how they'll handle the same
     pool of tasks, running planners in parallel).
@@ -52,7 +52,7 @@ class Planner:
             )
 
         self._pool = copy.deepcopy(pool)
-        self._dry_pool = pool.dry
+        self._dry_pool = self._pool.dry
 
         self._plans = []
 
@@ -63,7 +63,7 @@ class Planner:
             for e in energotons:
                 if self._plans == []:
                     self._plans = e.build_plans(
-                        self._dry_pool, cycle=c + 1, pool=self._pool
+                        self._dry_pool, self._pool, c + 1
                     )
                 else:
                     new_plans = []
@@ -85,10 +85,9 @@ class Planner:
 
     def pool_after_plan(self, plan):
         pool = copy.deepcopy(self._pool)
-        tasks = pool.as_dict
 
         for work_done in plan:
-            tasks[work_done.task.id].work_done.append(work_done)
+            pool.get(work_done.task.id).work_done.append(work_done)
 
         return pool
 

@@ -1,4 +1,5 @@
 from .work_unit import Priority, WorkUnit
+from .task import Task
 
 
 class Pool(WorkUnit):
@@ -80,15 +81,10 @@ class Pool(WorkUnit):
             self._indexate_pool(child)
 
     def flat_tasks(self):
-        tasks = []
-        for c in self.children.values():
-            if isinstance(c, Pool):
-                tasks.extend(c.flat_tasks())
-            else:
-                if not c.is_solved:
-                    tasks.append(c)
-
-        return tasks
+        return filter(
+            lambda c: isinstance(c, Task) and not c.is_solved,
+            self.children.values(),
+        )
 
     def get(self, child_id):
         return self.children.get(child_id)
@@ -102,11 +98,3 @@ class Pool(WorkUnit):
         del self.children[child_id]
 
         return child
-
-    @property
-    def as_dict(self):
-        dict_ = {}
-        for t in self.flat_tasks():
-            dict_[t.id] = t
-
-        return dict_

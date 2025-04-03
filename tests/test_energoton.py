@@ -18,7 +18,7 @@ class TestEnergoton(unittest.TestCase):
     def test_work(self):
         e = DeterministicEnergoton(10)
         t = Task(5)
-        e._dict_pool = {t.id: t}
+        e._pool = {t.id: t}
 
         dry = t.dry
         e.work(dry)

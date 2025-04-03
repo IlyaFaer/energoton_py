@@ -12,19 +12,27 @@ class Pool(WorkUnit):
         name=None,
     ):
         self.children = {}
-        for c in children:
-            c.parent = self
+        self._indexate_pool(children)
+
+        super().__init__(custom_fields, parent, priority, id_, name)
+
+    def _indexate_pool(self, pool):
+        for c in pool:
             if c.id in self.children:
                 raise ValueError(
                     f"Child '{c.name}' with id '{c.id}' already exists in the pool {self.name}."
                 )
 
+            if isinstance(c, Pool):
+                self._indexate_pool(c)
+
+            if not c.parent:
+                c.parent = self
+
             self.children[c.id] = c
 
-        super().__init__(custom_fields, parent, priority, id_, name)
-
     def __iter__(self):
-        return iter(self.children.values())
+        return iter(filter(lambda c: c.parent == self, self.children.values()))
 
     def __len__(self):
         return len(self.children)
@@ -38,7 +46,9 @@ class Pool(WorkUnit):
 
     @property
     def done(self):
-        for t in filter(lambda c: c.is_solved, self.children.values()):
+        for t in filter(
+            lambda c: c.is_solved and c.parent == self, self.children.values()
+        ):
             yield t
 
     @property
@@ -51,7 +61,10 @@ class Pool(WorkUnit):
 
     @property
     def todo(self):
-        for t in filter(lambda c: not c.is_solved, self.children.values()):
+        for t in filter(
+            lambda c: not c.is_solved and c.parent == self,
+            self.children.values(),
+        ):
             yield t
 
     def add(self, child):
@@ -62,6 +75,9 @@ class Pool(WorkUnit):
 
         child.parent = self
         self.children[child.id] = child
+
+        if isinstance(child, Pool):
+            self._indexate_pool(child)
 
     def flat_tasks(self):
         tasks = []
@@ -75,22 +91,15 @@ class Pool(WorkUnit):
         return tasks
 
     def get(self, child_id):
-        if child_id in self.children:
-            return self.children[child_id]
-
-        for task in self.flat_tasks():
-            if task.id == child_id:
-                return task
+        return self.children.get(child_id)
 
     def pop(self, child_id):
-        if child_id in self.children:
-            child = self.children[child_id]
-            self.children[child_id].parent = None
-            del self.children[child_id]
+        child = self.children[child_id]
+        if child.parent != self:
+            child.parent.pop(child_id)
 
-        for task in self.flat_tasks():
-            if task.id == child_id:
-                child = task.parent.pop(task.id)
+        self.children[child_id].parent = None
+        del self.children[child_id]
 
         return child
 

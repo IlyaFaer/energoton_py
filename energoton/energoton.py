@@ -11,8 +11,8 @@ class Energoton(Id):
         self._capacity = capacity
         self.energy_left = self.next_charge
 
-        self._dict_pool = None
-        self._dry_dict_pool = None
+        self._pool = None
+        self._dry_pool = None
 
         super().__init__(id_)
 
@@ -73,18 +73,18 @@ class Energoton(Id):
 
             task["spent"] -= work_done.amount
 
-    def build_plans(self, pool, dict_pool, cycle=1, plan=None):
-        if self._dict_pool is None:
-            self._dict_pool = dict_pool
+    def build_plans(self, dry_pool, pool, cycle=1, plan=None):
+        if self._pool is None:
+            self._pool = pool
 
-        if self._dry_dict_pool is None:
-            self._dry_dict_pool = pool
+        if self._dry_pool is None:
+            self._dry_pool = dry_pool
 
         plans = []
         self._build_plans(
             task=None,
             plan=plan or Plan(),
-            tasks=list(pool.values()),
+            tasks=list(dry_pool.values()),
             plans=plans,
             cycle=cycle,
         )
@@ -97,7 +97,7 @@ class Energoton(Id):
         task["spent"] += energy_spent
         work_done = WorkDone(
             "1",
-            self._dict_pool[task["id"]],
+            self._pool.get(task["id"]),
             energy_spent,
             self,
             cycle,
@@ -110,13 +110,13 @@ class Energoton(Id):
 
         for rel in task["relations"].values():
             if isinstance(rel, Blocking) and rel.blocked.id == task["id"]:
-                dry = self._dry_dict_pool[rel.blocker.id]
+                dry = self._dry_pool[rel.blocker.id]
                 if dry["spent"] < dry["cost"]:
                     blocked = True
 
             if isinstance(rel, Alternative):
                 for alt in rel.alternatives:
-                    dry = self._dry_dict_pool[alt.id]
+                    dry = self._dry_pool[alt.id]
                     if dry["spent"] == dry["cost"]:
                         actual = False
 

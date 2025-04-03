@@ -53,23 +53,24 @@ class Planner:
 
         self._pool = copy.deepcopy(pool)
         self._dry_pool = pool.dry
-        self._dict_pool = pool.as_dict
 
         self._plans = []
 
     def build_plans(self, energotons, cycles=1):
+        self._plans = []
+
         for c in range(cycles):
             for e in energotons:
                 if self._plans == []:
                     self._plans = e.build_plans(
-                        self._dry_pool, cycle=c + 1, dict_pool=self._dict_pool
+                        self._dry_pool, cycle=c + 1, pool=self._pool
                     )
                 else:
                     new_plans = []
                     for plan in self._plans:
                         for new_plan in e.build_plans(
                             self.dry_pool_after_plan(plan),
-                            self._dict_pool,
+                            self._pool,
                             c + 1,
                             plan,
                         ):

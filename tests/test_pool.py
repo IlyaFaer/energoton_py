@@ -61,9 +61,7 @@ class TestPool(unittest.TestCase):
         self.assertIsNone(new_pool.parent)
 
     def test_pop_embedded_task(self):
-        task_id = "there-is-some-id"
-
-        task = Task(10, id_=task_id, name="Task 1")
+        task = Task(10, id_="1", name="Task 1")
         pool = Pool(children=[task], name="Pool 1")
 
         root_pool = Pool(children=[pool], name="Root Pool")

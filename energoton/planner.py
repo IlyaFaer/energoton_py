@@ -54,31 +54,36 @@ class Planner:
         self._pool = copy.deepcopy(pool)
         self._dry_pool = self._pool.dry
 
-        self._plans = []
+        self._plans = [Plan()]
 
     def build_plans(self, energotons, cycles=1):
-        self._plans = []
+        if len(energotons) == 0:
+            raise ValueError("No energotons provided for planning.")
 
-        for c in range(cycles):
+        if cycles < 1:
+            raise ValueError(
+                "The number of work cycles must be greater than 0."
+            )
+
+        energotons = copy.deepcopy(energotons)
+        for e in energotons:
+            e.pool = self._pool
+
+        self._plans = [Plan()]
+
+        for c in range(1, cycles + 1):
             for e in energotons:
-                if self._plans == []:
-                    self._plans = e.build_plans(
-                        self._dry_pool, self._pool, c + 1
-                    )
-                else:
-                    new_plans = []
-                    for plan in self._plans:
-                        for new_plan in e.build_plans(
-                            self.dry_pool_after_plan(plan),
-                            self._pool,
-                            c + 1,
-                            plan,
-                        ):
-                            if new_plan not in new_plans:
-                                new_plans.append(new_plan)
+                new_plans = []
+                for plan in self._plans:
+                    for new_plan in e.build_plans(
+                        self.dry_pool_after_plan(plan),
+                        c,
+                        plan,
+                    ):
+                        if new_plan not in new_plans:
+                            new_plans.append(new_plan)
 
-                    self._plans = new_plans
-
+                self._plans = new_plans
                 e.recharge()
 
         return tuple(self._plans)

@@ -18,7 +18,7 @@ class TestEnergoton(unittest.TestCase):
     def test_work(self):
         e = DeterministicEnergoton(10)
         t = Task(5)
-        e._pool = {t.id: t}
+        e.pool = {t.id: t}
 
         dry = t.dry
         e.work(dry)
@@ -41,7 +41,8 @@ class TestEnergoton(unittest.TestCase):
         pool.add(t5)
 
         e = DeterministicEnergoton(8)
-        plans = e.build_plans(pool.dry, pool)
+        e.pool = pool
+        plans = e.build_plans(pool.dry)
 
         self.assertEqual(
             plans,
@@ -67,7 +68,8 @@ class TestEnergoton(unittest.TestCase):
         pool.add(t3)
 
         e = NonDeterministicEnergoton(8)
-        plans = e.build_plans(pool.dry, pool)
+        e.pool = pool
+        plans = e.build_plans(pool.dry)
 
         self.assertEqual(
             plans,
@@ -106,7 +108,8 @@ class TestEnergoton(unittest.TestCase):
         Blocking(t5, t3)
 
         e = DeterministicEnergoton(8)
-        plans = e.build_plans(pool.dry, pool)
+        e.pool = pool
+        plans = e.build_plans(pool.dry)
 
         self.assertEqual(
             plans,
@@ -136,7 +139,8 @@ class TestEnergoton(unittest.TestCase):
         Alternative(t1, t2)
 
         e = DeterministicEnergoton(8)
-        plans = list(e.build_plans(pool.dry, pool))
+        e.pool = pool
+        plans = list(e.build_plans(pool.dry))
 
         self.assertEqual(
             plans,

@@ -11,10 +11,13 @@ class Energoton(Id):
         self._capacity = capacity
         self.energy_left = self.next_charge
 
-        self._pool = None
+        self.pool = None
         self._dry_pool = None
 
         super().__init__(id_)
+
+    def __eq__(self, other):
+        return self.id == other.id
 
     @property
     def capacity(self):
@@ -73,10 +76,7 @@ class Energoton(Id):
 
             task["spent"] -= work_done.amount
 
-    def build_plans(self, dry_pool, pool, cycle=1, plan=None):
-        if self._pool is None:
-            self._pool = pool
-
+    def build_plans(self, dry_pool, cycle=1, plan=None):
         if self._dry_pool is None:
             self._dry_pool = dry_pool
 
@@ -97,7 +97,7 @@ class Energoton(Id):
         task["spent"] += energy_spent
         work_done = WorkDone(
             "1",
-            self._pool.get(task["id"]),
+            self.pool.get(task["id"]),
             energy_spent,
             self,
             cycle,

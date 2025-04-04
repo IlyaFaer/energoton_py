@@ -9,6 +9,9 @@ class TestEnergoton(unittest.TestCase):
     def test_can_solve(self):
         e = DeterministicEnergoton(10)
         t = Task(5)
+
+        e.pool = {t.id: t}
+
         dry = t.dry
         self.assertTrue(e.can_solve(dry))
 
@@ -44,18 +47,16 @@ class TestEnergoton(unittest.TestCase):
         e.pool = pool
         plans = e.build_plans(pool.dry)
 
-        self.assertEqual(
-            plans,
+        p = Plan(
             [
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-            ],
+                WorkDone(t2, 2, e),
+                WorkDone(t3, 4, e),
+                WorkDone(t4, 2, e),
+            ]
         )
+        p.commit()
+
+        self.assertEqual(plans, [p])
 
     def test_build_plans_non_deterministic(self):
         pool = Pool()
@@ -71,25 +72,25 @@ class TestEnergoton(unittest.TestCase):
         e.pool = pool
         plans = e.build_plans(pool.dry)
 
-        self.assertEqual(
-            plans,
+        p1 = Plan(
             [
-                Plan(
-                    [
-                        WorkDone(None, t1, 5, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 1, e),
-                    ]
-                ),
-                Plan(
-                    [
-                        WorkDone(None, t1, 2, e),
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                    ]
-                ),
-            ],
+                WorkDone(t1, 5, e),
+                WorkDone(t2, 2, e),
+                WorkDone(t3, 1, e),
+            ]
         )
+        p1.commit()
+
+        p2 = Plan(
+            [
+                WorkDone(t1, 2, e),
+                WorkDone(t2, 2, e),
+                WorkDone(t3, 4, e),
+            ]
+        )
+        p2.commit()
+
+        self.assertEqual(plans, [p1, p2])
 
     def test_build_plans_blocked(self):
         pool = Pool()
@@ -111,15 +112,20 @@ class TestEnergoton(unittest.TestCase):
         e.pool = pool
         plans = e.build_plans(pool.dry)
 
+        p1 = Plan([WorkDone(t1, 5, e), WorkDone(t2, 2, e)])
+        p2 = Plan([WorkDone(t1, 5, e), WorkDone(t4, 2, e)])
+        p3 = Plan([WorkDone(t4, 2, e), WorkDone(t5, 6, e)])
+        p4 = Plan([WorkDone(t2, 2, e), WorkDone(t4, 2, e)])
+        p5 = Plan([WorkDone(t2, 2, e), WorkDone(t5, 6, e)])
+        p1.commit()
+        p2.commit()
+        p3.commit()
+        p4.commit()
+        p5.commit()
+
         self.assertEqual(
             plans,
-            [
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t2, 2, e)]),
-                Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t5, 6, e)]),
-                Plan([WorkDone(None, t2, 2, e), WorkDone(None, t4, 2, e)]),
-                Plan([WorkDone(None, t4, 2, e), WorkDone(None, t5, 6, e)]),
-            ],
+            [p1, p2, p3, p4, p5],
         )
 
     def test_build_plans_alternative(self):
@@ -142,18 +148,16 @@ class TestEnergoton(unittest.TestCase):
         e.pool = pool
         plans = list(e.build_plans(pool.dry))
 
-        self.assertEqual(
-            plans,
+        p = Plan(
             [
-                Plan(
-                    [
-                        WorkDone(None, t2, 2, e),
-                        WorkDone(None, t3, 4, e),
-                        WorkDone(None, t4, 2, e),
-                    ]
-                ),
-            ],
+                WorkDone(t2, 2, e),
+                WorkDone(t3, 4, e),
+                WorkDone(t4, 2, e),
+            ]
         )
+        p.commit()
+
+        self.assertEqual(plans, [p])
 
     def test_charges(self):
         charge = 5

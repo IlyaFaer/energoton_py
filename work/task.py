@@ -56,7 +56,6 @@ class Task(WorkUnit):
             "id": self.id,
             "cost": self.cost,
             "spent": self.spent,
-            "relations": self.relations,
             "priority": self.priority,
         }
 

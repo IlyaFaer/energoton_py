@@ -165,15 +165,13 @@ class WorkUnit(Id, metaclass=abc.ABCMeta):
             return self.parent.is_blocked if self.parent else False
 
 
-class WorkDone(Id):
+class WorkDone:
     """Represents a log of some work being done in some plan.
 
     NOTE: It can represent a part of task being done -
         not necessarily an entire task being solved.
 
     Args:
-        id_ (Optional[str | uuid.UUID]):
-            Log id. Generated, if not provided explicitly.
         task (work.task.Task):
             Task that was worked on.
         energy_spent (int):
@@ -185,13 +183,13 @@ class WorkDone(Id):
             Cycle number of the work cycle. Defaults to 1.
     """
 
-    def __init__(self, id_, task, energy_spent, assignee, cycle=1):
+    def __init__(self, task, energy_spent, assignee, cycle=1):
         self.task = task
         self.amount = energy_spent
         self.assignee = assignee
         self.cycle = cycle
 
-        super().__init__(id_)
+        self.dry = (self.task.id, self.amount)
 
     def __eq__(self, other):
         """Magic method for the equality operator.
@@ -224,7 +222,3 @@ class WorkDone(Id):
             f"WorkDone(task={self.task}, amount={self.amount},"
             f" cycle={self.cycle}, assignee='{self.assignee.id}')"
         )
-
-    @property
-    def dry(self):
-        return (self.task.id, self.amount)

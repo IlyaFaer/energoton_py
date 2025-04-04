@@ -15,7 +15,7 @@ class Id:
     """
 
     def __init__(self, id_=None):
-        self._id = id_ or uuid.uuid4()
+        self.id = id_ or uuid.uuid4()
 
     def __eq__(self, other):
         """Magic method for the equality operator.
@@ -35,21 +35,3 @@ class Id:
             int: Object hash.
         """
         return hash(self.id)
-
-    @property
-    def id(self):
-        """Object id.
-
-        Returns:
-            Union[str, uuid.UUID]: Object id.
-        """
-        return self._id
-
-    @id.setter
-    def id(self, _):
-        """Changing an object id is not allowed.
-
-        Raises:
-            ValueError: Object id is immutable.
-        """
-        raise ValueError(f"Object '{self.id}' id is immutable")

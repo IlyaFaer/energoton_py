@@ -4,15 +4,6 @@ from base.base import Id
 
 
 class TestId(unittest.TestCase):
-    def test_id_immutable(self):
-        id_ = 1
-
-        unit = Id(id_)
-        with self.assertRaises(ValueError):
-            unit.id = 2
-
-        self.assertEqual(unit.id, id_)
-
     def test_id_generated(self):
         unit1 = Id()
         unit2 = Id()

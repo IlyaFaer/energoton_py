@@ -11,12 +11,12 @@ class TestTask(unittest.TestCase):
         self.assertFalse(task.is_solved)
         self.assertEqual(task.todo, 10)
 
-        task.work_done.append(WorkDone(None, task, 10, mock.Mock()))
+        task.work_done.append(WorkDone(task, 10, mock.Mock()))
         self.assertTrue(task.is_solved)
         self.assertEqual(task.todo, 0)
 
         task.work_done = []
-        task.work_done.append(WorkDone(None, task, 5, mock.Mock()))
+        task.work_done.append(WorkDone(task, 5, mock.Mock()))
         self.assertFalse(task.is_solved)
         self.assertEqual(task.todo, 5)
 
@@ -30,13 +30,13 @@ class TestTask(unittest.TestCase):
         self.assertFalse(rel.is_solved)
         self.assertTrue(t1.is_actual)
 
-        t1.work_done.append(WorkDone(None, t1, 2, mock.Mock()))
+        t1.work_done.append(WorkDone(t1, 2, mock.Mock()))
         self.assertTrue(rel.is_solved)
         self.assertFalse(t2.is_actual)
         self.assertFalse(t3.is_actual)
 
         t1.work_done = []
-        t1.work_done.append(WorkDone(None, t2, 2, mock.Mock()))
+        t1.work_done.append(WorkDone(t2, 2, mock.Mock()))
         self.assertTrue(rel.is_solved)
         self.assertFalse(t1.is_actual)
         self.assertFalse(t3.is_actual)
@@ -44,7 +44,7 @@ class TestTask(unittest.TestCase):
     def test_part_done(self):
         task = Task(8, name="Task 1")
 
-        work_done = WorkDone(None, task, 5, mock.Mock())
+        work_done = WorkDone(task, 5, mock.Mock())
         task.work_done.append(work_done)
 
         self.assertEqual(work_done.amount, 5)
@@ -130,7 +130,7 @@ class TestPartTask(unittest.TestCase):
     def test_part(self):
         task = Task(10, name="Task 1")
 
-        done = WorkDone(None, task, 5, mock.Mock())
+        done = WorkDone(task, 5, mock.Mock())
         task.work_done.append(done)
 
         self.assertEqual(done.amount, 5)

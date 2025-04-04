@@ -46,10 +46,10 @@ class TestPlanner(unittest.TestCase):
         planner = Planner(pool)
         plans = planner.build_plans([e])
 
-        self.assertEqual(
-            plans,
-            (Plan([WorkDone(None, t1, 5, e), WorkDone(None, t4, 2, e)]),),
-        )
+        p = Plan([WorkDone(t1, 5, e), WorkDone(t4, 2, e)])
+        p.commit()
+
+        self.assertEqual(plans, (p,))
 
     def test_pool_after_plan(self):
         pool1 = Pool()
@@ -127,19 +127,17 @@ class TestPlanner(unittest.TestCase):
         planner = Planner(pool)
         plans = planner.build_plans([e], cycles=2)
 
-        self.assertEqual(
-            plans,
-            (
-                Plan(
-                    [
-                        WorkDone(None, t1, 5, e, 2),
-                        WorkDone(None, t2, 2, e, 1),
-                        WorkDone(None, t3, 4, e, 1),
-                        WorkDone(None, t4, 2, e, 1),
-                    ]
-                ),
-            ),
+        p = Plan(
+            [
+                WorkDone(t1, 5, e, 2),
+                WorkDone(t2, 2, e, 1),
+                WorkDone(t3, 4, e, 1),
+                WorkDone(t4, 2, e, 1),
+            ]
         )
+        p.commit()
+
+        self.assertEqual(plans, (p,))
 
     def test_by_cycles(self):
         pool = Pool()
@@ -163,11 +161,11 @@ class TestPlanner(unittest.TestCase):
             [
                 {
                     1: [
-                        WorkDone(None, t1, 5, e, 1),
-                        WorkDone(None, t2, 2, e, 1),
+                        WorkDone(t1, 5, e, 1),
+                        WorkDone(t2, 2, e, 1),
                     ],
                     2: [
-                        WorkDone(None, t3, 4, e, 2),
+                        WorkDone(t3, 4, e, 2),
                     ],
                 },
             ],
@@ -197,10 +195,10 @@ class TestPlanner(unittest.TestCase):
             [
                 {
                     "1": [
-                        WorkDone(None, t1, 2, e1),
-                        WorkDone(None, t3, 2, e1),
+                        WorkDone(t1, 2, e1),
+                        WorkDone(t3, 2, e1),
                     ],
-                    "2": [WorkDone(None, t2, 4, e2)],
+                    "2": [WorkDone(t2, 4, e2)],
                 },
             ],
         )

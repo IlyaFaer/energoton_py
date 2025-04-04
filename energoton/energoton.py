@@ -1,7 +1,5 @@
-import copy
-
 from base import Id
-from work import WorkDone, Blocking, Alternative
+from work import WorkDone, Blocking
 from .planner import Plan
 
 
@@ -39,6 +37,7 @@ class Energoton(Id):
 
     def _commit_plan(self, plan, plans):
         sorted_plan = Plan(sorted(plan, key=lambda w: w.task.id))
+        sorted_plan.commit()
         if plans:
             if sorted_plan in plans:
                 return
@@ -59,7 +58,7 @@ class Energoton(Id):
                 tasks.remove(task)
 
         can_continue = False
-        for t in copy.copy(tasks):
+        for t in tasks:
             if self.can_solve(t):
                 self._build_plans(t, plan, tasks, plans, cycle)
                 can_continue = True
@@ -77,8 +76,7 @@ class Energoton(Id):
             task["spent"] -= work_done.amount
 
     def build_plans(self, dry_pool, cycle=1, plan=None):
-        if self._dry_pool is None:
-            self._dry_pool = dry_pool
+        self._dry_pool = dry_pool
 
         plans = []
         self._build_plans(
@@ -95,52 +93,45 @@ class Energoton(Id):
         self.energy_left -= energy_spent
 
         task["spent"] += energy_spent
-        work_done = WorkDone(
-            "1",
+
+        return WorkDone(
             self.pool.get(task["id"]),
             energy_spent,
             self,
             cycle,
         )
-        return work_done
 
-    def _check_relations(self, task):
-        blocked = False
-        actual = True
-
-        for rel in task["relations"].values():
-            if isinstance(rel, Blocking) and rel.blocked.id == task["id"]:
-                dry = self._dry_pool[rel.blocker.id]
-                if dry["spent"] < dry["cost"]:
-                    blocked = True
-
-            if isinstance(rel, Alternative):
+    def _is_actual(self, task):
+        relations = self.pool.get(task["id"]).relations
+        for rel in relations.values():
+            if isinstance(rel, Blocking):
+                if rel.blocked.id == task["id"]:
+                    dry = self._dry_pool[rel.blocker.id]
+                    if dry["spent"] < dry["cost"]:
+                        return False
+            else:
                 for alt in rel.alternatives:
                     dry = self._dry_pool[alt.id]
                     if dry["spent"] == dry["cost"]:
-                        actual = False
+                        return False
 
-        return blocked, actual
+        return True
 
 
 class DeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        blocked, actual = self._check_relations(task)
-
         if (
             self.energy_left > 0
             and self.energy_left >= task["cost"] - task["spent"]
-            and not blocked
-            and actual
+            and self._is_actual(task)
         ):
             return True
+
         return False
 
 
 class NonDeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        blocked, actual = self._check_relations(task)
-
-        if self.energy_left > 0 and not blocked and actual:
+        if self.energy_left > 0 and self._is_actual(task):
             return True
         return False

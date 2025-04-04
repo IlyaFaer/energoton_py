@@ -5,7 +5,7 @@ from .task import Task
 class Pool(WorkUnit):
     def __init__(
         self,
-        custom_fields={},
+        custom_fields=None,
         parent=None,
         priority=Priority("normal"),
         children=[],

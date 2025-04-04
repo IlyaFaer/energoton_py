@@ -7,8 +7,9 @@ from energoton.planner import Plan
 
 class TestPlan(unittest.TestCase):
     def test_energy_spent(self):
-        work = [WorkDone(None, mock.Mock(), 8, mock.Mock()) for _ in range(5)]
+        work = [WorkDone(Task(5), 8, mock.Mock()) for _ in range(5)]
         plan = Plan(work)
+        plan.commit()
 
         self.assertEqual(plan.energy_spent, 40)
 
@@ -21,7 +22,8 @@ class TestPlan(unittest.TestCase):
             Task(5, priority=Priority("highest")),
         )
 
-        work_done = [WorkDone(None, t, 5, mock.Mock()) for t in tasks]
+        work_done = [WorkDone(t, 5, mock.Mock()) for t in tasks]
         plan = Plan(work_done)
+        plan.commit()
 
         self.assertEqual(plan.value, 31)

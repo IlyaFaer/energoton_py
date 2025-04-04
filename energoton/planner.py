@@ -3,29 +3,20 @@ from work import Pool
 
 
 class Plan(list):
-    def __len__(self):
-        count = 0
-        for t in self:
-            if isinstance(t, Pool):
-                count += len(t.flat_tasks())
-            else:
-                count += 1
-        return count
+    def commit(self):
+        self.value = 0
+        self.energy_spent = 0
+        dry = []
+
+        for w in self:
+            self.value += w.task.priority.value
+            self.energy_spent += w.amount
+            dry.append(w.dry)
+
+        self.dry = tuple(dry)
 
     def __eq__(self, other):
         return self.dry == other.dry
-
-    @property
-    def dry(self):
-        return tuple([w.dry for w in self])
-
-    @property
-    def energy_spent(self):
-        return sum(work.amount for work in self)
-
-    @property
-    def value(self):
-        return sum(t.task.priority.value for t in self)
 
 
 class Planner:

@@ -39,14 +39,13 @@ class Energoton(Id):
         sorted_plan = Plan(sorted(plan, key=lambda w: w.task.id))
         sorted_plan.commit()
         if plans:
-            if sorted_plan in plans:
-                return
-
             if sorted_plan.value < plans[0].value:
                 return
 
             if sorted_plan.value > plans[0].value:
                 plans.clear()
+            elif sorted_plan in plans:
+                return
 
         plans.append(sorted_plan)
 
@@ -57,14 +56,17 @@ class Energoton(Id):
             if task["cost"] == task["spent"]:
                 tasks.remove(task)
 
-        can_continue = False
-        for t in tasks:
-            if self.can_solve(t):
-                self._build_plans(t, plan, tasks, plans, cycle)
-                can_continue = True
-
-        if not can_continue:
+        if self.energy_left == 0:
             self._commit_plan(plan, plans)
+        else:
+            can_continue = False
+            for t in tasks:
+                if self.can_solve(t):
+                    self._build_plans(t, plan, tasks, plans, cycle)
+                    can_continue = True
+
+            if not can_continue:
+                self._commit_plan(plan, plans)
 
         if task is not None:
             if task["cost"] == task["spent"]:
@@ -103,6 +105,7 @@ class Energoton(Id):
 
     def _is_actual(self, task):
         relations = self.pool.get(task["id"]).relations
+
         for rel in relations.values():
             if isinstance(rel, Blocking):
                 if rel.blocked.id == task["id"]:
@@ -120,11 +123,9 @@ class Energoton(Id):
 
 class DeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        if (
-            self.energy_left > 0
-            and self.energy_left >= task["cost"] - task["spent"]
-            and self._is_actual(task)
-        ):
+        if self.energy_left >= task["cost"] - task[
+            "spent"
+        ] and self._is_actual(task):
             return True
 
         return False
@@ -132,6 +133,6 @@ class DeterministicEnergoton(Energoton):
 
 class NonDeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        if self.energy_left > 0 and self._is_actual(task):
+        if self._is_actual(task):
             return True
         return False

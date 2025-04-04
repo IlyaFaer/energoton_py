@@ -87,7 +87,7 @@ class Pool(WorkUnit):
         )
 
     def get(self, child_id):
-        return self.children.get(child_id)
+        return self.children[child_id]
 
     def pop(self, child_id):
         child = self.children[child_id]

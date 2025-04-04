@@ -1,5 +1,4 @@
 import copy
-from work import Pool
 
 
 class Plan(list):

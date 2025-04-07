@@ -10,7 +10,7 @@ class TestEnergoton(unittest.TestCase):
         e = DeterministicEnergoton(10)
         t = Task(5)
 
-        e.pool = {t.id: t}
+        e.pool = Pool(children=[t])
 
         dry = t.dry
         self.assertTrue(e.can_solve(dry))
@@ -21,7 +21,7 @@ class TestEnergoton(unittest.TestCase):
     def test_work(self):
         e = DeterministicEnergoton(10)
         t = Task(5)
-        e.pool = {t.id: t}
+        e.pool = Pool(children=[t])
 
         dry = t.dry
         e.work(dry)

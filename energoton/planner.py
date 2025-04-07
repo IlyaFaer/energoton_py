@@ -14,6 +14,12 @@ class Plan(list):
 
         self.dry = tuple(dry)
 
+    def calc_value(self):
+        value = 0
+        for w in self:
+            value += w.task.priority.value
+        return value
+
     def __eq__(self, other):
         return self.dry == other.dry
 
@@ -89,17 +95,11 @@ class Planner:
     def dry_pool_after_plan(self, plan):
         pool = copy.deepcopy(self._dry_pool)
 
-        to_del = []
         for work_done in plan:
-            pool[work_done.task.id]["spent"] += work_done.amount
-            if (
-                pool[work_done.task.id]["spent"]
-                == pool[work_done.task.id]["cost"]
-            ):
-                to_del.append(work_done.task.id)
-
-        for t in to_del:
-            del pool[t]
+            task = pool[work_done.task.id]
+            task["spent"] += work_done.amount
+            if task["spent"] == task["cost"]:
+                del pool[work_done.task.id]
 
         return pool
 

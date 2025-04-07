@@ -43,7 +43,13 @@ class Pool(WorkUnit):
 
     @property
     def dry(self):
-        return {t.id: t.dry for t in self.flat_tasks()}
+        return {
+            t.id: t.dry
+            for t in filter(
+                lambda c: not c.is_solved and isinstance(c, Task),
+                self.children.values(),
+            )
+        }
 
     @property
     def done(self):
@@ -79,12 +85,6 @@ class Pool(WorkUnit):
 
         if isinstance(child, Pool):
             self._indexate_pool(child)
-
-    def flat_tasks(self):
-        return filter(
-            lambda c: isinstance(c, Task) and not c.is_solved,
-            self.children.values(),
-        )
 
     def get(self, child_id):
         return self.children[child_id]

@@ -49,10 +49,6 @@ print("Solved tasks in the pool: ", list(pool.done))
 # All the unsolved tasks can be got from the pool.
 print("Unsolved tasks in the pool: ", list(pool.todo))
 
-# All the tasks of the pool can be got in a flat list,
-# unrolling the embedded pools.
-print("All tasks as a list: ", root_pool.flat_tasks())
-
 # A pool can be iterated over.
 print("Iterate through the pool:")
 for t in pool:

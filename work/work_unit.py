@@ -204,14 +204,6 @@ class WorkDone:
             and self.cycle == other.cycle
         )
 
-    def __hash__(self):
-        """Magic method for the hash function.
-
-        Returns:
-            int: Object hash.
-        """
-        return hash(self.id)
-
     def __repr__(self):
         """Textual representation of the work piece.
 

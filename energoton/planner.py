@@ -65,7 +65,7 @@ class Planner:
         for e in energotons:
             e.pool = self._pool
 
-        self._plans = [Plan()]
+        self._plans = (Plan(),)
 
         for c in range(1, cycles + 1):
             for e in energotons:
@@ -76,19 +76,26 @@ class Planner:
                         c,
                         plan,
                     ):
+                        if new_plans:
+                            if new_plan.value < new_plans[0].value:
+                                continue
+
+                            if new_plan.value > new_plans[0].value:
+                                new_plans.clear()
+
                         if new_plan not in new_plans:
                             new_plans.append(new_plan)
 
-                self._plans = new_plans
+                self._plans = tuple(new_plans)
                 e.recharge()
 
-        return tuple(self._plans)
+        return self._plans
 
     def pool_after_plan(self, plan):
         pool = copy.deepcopy(self._pool)
 
         for work_done in plan:
-            pool.get(work_done.task.id).work_done.append(work_done)
+            pool.children[work_done.task.id].work_done.append(work_done)
 
         return pool
 

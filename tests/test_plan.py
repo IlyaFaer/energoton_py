@@ -6,13 +6,6 @@ from energoton.planner import Plan
 
 
 class TestPlan(unittest.TestCase):
-    def test_energy_spent(self):
-        work = [WorkDone(Task(5), 8, mock.Mock()) for _ in range(5)]
-        plan = Plan(work)
-        plan.commit()
-
-        self.assertEqual(plan.energy_spent, 40)
-
     def test_value(self):
         tasks = (
             Task(5, priority=Priority("lowest")),

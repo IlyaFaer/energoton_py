@@ -54,7 +54,7 @@ class Energoton(Id):
         plans.append(sorted_plan)
 
     def _build_plans(self, task, plan, tasks, plans, cycle):
-        if task is not None:
+        if task:
             work_done = self.work(task, cycle)
             plan.append(work_done)
             if task["cost"] == task["spent"]:
@@ -72,7 +72,7 @@ class Energoton(Id):
             if not can_continue:
                 self._commit_plan(plan, plans)
 
-        if task is not None:
+        if task:
             if task["cost"] == task["spent"]:
                 tasks.append(task)
 
@@ -107,12 +107,13 @@ class Energoton(Id):
             cycle,
         )
 
-    def _is_actual(self, task):
-        relations = self.pool.children[task["id"]].relations
+    def _is_actual(self, task_id):
+        if not self.pool.children[task_id].relations:
+            return True
 
-        for rel in relations.values():
+        for rel in self.pool.children[task_id].relations.values():
             if isinstance(rel, Blocking):
-                if rel.blocked.id == task["id"]:
+                if rel.blocked.id == task_id:
                     dry = self._dry_pool[rel.blocker.id]
                     if dry["spent"] < dry["cost"]:
                         return False
@@ -129,9 +130,9 @@ class DeterministicEnergoton(Energoton):
     def can_solve(self, task):
         return self.energy_left >= task["cost"] - task[
             "spent"
-        ] and self._is_actual(task)
+        ] and self._is_actual(task["id"])
 
 
 class NonDeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        return self._is_actual(task)
+        return self._is_actual(task["id"])

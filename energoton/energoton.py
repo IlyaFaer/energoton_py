@@ -58,14 +58,18 @@ class Energoton(Id):
             work_done = self.work(task, cycle)
             plan.append(work_done)
             if task["cost"] == task["spent"]:
-                tasks.remove(task)
+                ind = tasks.index(task)
+                del tasks[ind]
 
         if self.energy_left == 0:
             self._commit_plan(plan, plans)
         else:
             can_continue = False
             for t in tasks:
-                if self.can_solve(t):
+                if not self.can_solve(t):
+                    break
+
+                if self._is_actual(t["id"]):
                     self._build_plans(t, plan, tasks, plans, cycle)
                     can_continue = True
 
@@ -74,7 +78,7 @@ class Energoton(Id):
 
         if task:
             if task["cost"] == task["spent"]:
-                tasks.append(task)
+                tasks.insert(ind, task)
 
             del plan[-1]
 
@@ -128,11 +132,9 @@ class Energoton(Id):
 
 class DeterministicEnergoton(Energoton):
     def can_solve(self, task):
-        return self.energy_left >= task["cost"] - task[
-            "spent"
-        ] and self._is_actual(task["id"])
+        return self.energy_left >= task["cost"] - task["spent"]
 
 
 class NonDeterministicEnergoton(Energoton):
-    def can_solve(self, task):
-        return self._is_actual(task["id"])
+    def can_solve(self, _):
+        return True

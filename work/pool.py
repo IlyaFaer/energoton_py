@@ -43,13 +43,16 @@ class Pool(WorkUnit):
 
     @property
     def dry(self):
-        return {
-            t.id: t.dry
-            for t in filter(
+        todo = list(
+            filter(
                 lambda c: not c.is_solved and isinstance(c, Task),
                 self.children.values(),
             )
-        }
+        )
+        todo.sort(key=lambda t: t.cost)
+
+        dry = {t.id: t.dry for t in todo}
+        return dry
 
     @property
     def done(self):

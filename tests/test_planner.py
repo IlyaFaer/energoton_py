@@ -156,16 +156,17 @@ class TestPlanner(unittest.TestCase):
         plans = planner.build_plans([e], cycles=2)
 
         by_cycles = planner.by_cycles(plans)
+
         self.assertEqual(
             by_cycles,
             [
                 {
-                    1: [
-                        WorkDone(t1, 5, e, 1),
-                        WorkDone(t2, 2, e, 1),
-                    ],
                     2: [
-                        WorkDone(t3, 4, e, 2),
+                        WorkDone(t1, 5, e, 2),
+                    ],
+                    1: [
+                        WorkDone(t2, 2, e, 1),
+                        WorkDone(t3, 4, e, 1),
                     ],
                 },
             ],

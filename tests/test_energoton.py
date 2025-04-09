@@ -74,18 +74,18 @@ class TestEnergoton(unittest.TestCase):
 
         p1 = Plan(
             [
-                WorkDone(t1, 5, e),
+                WorkDone(t1, 2, e),
                 WorkDone(t2, 2, e),
-                WorkDone(t3, 1, e),
+                WorkDone(t3, 4, e),
             ]
         )
         p1.commit()
 
         p2 = Plan(
             [
-                WorkDone(t1, 2, e),
+                WorkDone(t1, 5, e),
                 WorkDone(t2, 2, e),
-                WorkDone(t3, 4, e),
+                WorkDone(t3, 1, e),
             ]
         )
         p2.commit()
@@ -112,11 +112,11 @@ class TestEnergoton(unittest.TestCase):
         e.pool = pool
         plans = e.build_plans(pool.dry)
 
-        p1 = Plan([WorkDone(t1, 5, e), WorkDone(t2, 2, e)])
-        p2 = Plan([WorkDone(t1, 5, e), WorkDone(t4, 2, e)])
-        p3 = Plan([WorkDone(t4, 2, e), WorkDone(t5, 6, e)])
-        p4 = Plan([WorkDone(t2, 2, e), WorkDone(t4, 2, e)])
-        p5 = Plan([WorkDone(t2, 2, e), WorkDone(t5, 6, e)])
+        p1 = Plan([WorkDone(t2, 2, e), WorkDone(t4, 2, e)])
+        p2 = Plan([WorkDone(t1, 5, e), WorkDone(t2, 2, e)])
+        p3 = Plan([WorkDone(t2, 2, e), WorkDone(t5, 6, e)])
+        p4 = Plan([WorkDone(t1, 5, e), WorkDone(t4, 2, e)])
+        p5 = Plan([WorkDone(t4, 2, e), WorkDone(t5, 6, e)])
         p1.commit()
         p2.commit()
         p3.commit()
